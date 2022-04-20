@@ -12,6 +12,10 @@ workspace "GEngine"
 tdir = "bin/%{cfg.buildcfg}/%{prj.name}"
 odir = "bin-int/%{cfg.buildcfg}/%{prj.name}"
 
+-- External Dependencies
+externals = {}
+externals["sdl2"] = "external/sdl2"
+
 project "GEngine"
 	location "GEngine"
 	kind "StaticLib"
@@ -31,7 +35,8 @@ project "GEngine"
 
 	sysincludedirs
 	{
-		"%{prj.name}/include/%{prj.name}"
+		"%{prj.name}/include/%{prj.name}",
+		"%{externals.sdl2}/include"
 		--"%{prj.name}/src"
 
 	}
@@ -143,6 +148,18 @@ project "GEngineEditor"
 	defines
 	{
 		"GENGINE_PLATFORM_WINDOWS"
+	}
+
+	libdirs
+	{
+		"%{externals.sdl2}/lib"
+	}
+
+	links
+	{
+		"SDL2",
+		"SDL2main",
+		"SDL2test"
 	}
 
 	-- Linux

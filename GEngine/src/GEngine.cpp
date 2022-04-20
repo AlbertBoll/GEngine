@@ -1,12 +1,10 @@
 #include "GEngine.h"
+#include "sdl2/SDL.h"
 #include <iostream>
+
 
 namespace GEngine
 {
-	int Add(int a, int b)
-	{
-		return a + b;
-	}
 
 	void GetInfo()
 	{
@@ -24,5 +22,26 @@ namespace GEngine
 			std::cout << "Platform: LINUX" << std::endl;
 		#endif
 
+	}
+	bool Initialize()
+	{
+
+		if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+		{
+			std::cout << "Error initializing SDL2: " << SDL_GetError() << std::endl;
+			return false;
+		}
+		else
+		{
+			SDL_version version;
+			SDL_VERSION(&version);
+			std::cout << "SDL " << (uint32_t)version.major << "." << (uint32_t)version.minor << "." << (uint32_t)version.patch << std::endl;
+			return true;
+		}
+	}
+
+	void Shutdown()
+	{
+		SDL_Quit();
 	}
 }

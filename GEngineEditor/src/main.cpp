@@ -3,7 +3,8 @@
 
 int main()
 {
-	std::cout << "3 + " << "4 = " << GEngine::Add(3, 4) << std::endl;
-
 	GEngine::GetInfo();
+	if (GEngine::Initialize())
+		GEngine::Shutdown();
+
 }
