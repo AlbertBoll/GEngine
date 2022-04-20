@@ -1,0 +1,13 @@
+# Binaries
+/bin
+bin-int/
+logs/
+.gitignore.bak
+
+# Visual Studio files and folder
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+
