@@ -1,10 +1,29 @@
 # Binaries
-/bin
+# /bin
+bin/Debug/GEngine/
+# bin/Debug/GEngineEditor/**.log
+# bin/Debug/GEngineEditor/**.exe
+# bin/Debug/GEngineEditor/**.pdb
+bin/Release/GEngine/
+# bin/Release/GEngineEditor/**.log
+# bin/Release/GEngineEditor/**.exe
+# bin/Release/GEngineEditor/**.pdb
+
+external/glad/bin/
+
+
+
 bin-int/
 logs/
 .gitignore.bak
 
+# GEngine files
+*.log
+*.exe
+*.pdb
+
 # Visual Studio files and folder
+
 .vs/
 **.sln
 **.vcxproj

@@ -1,5 +1,6 @@
-#include "GEngine.h"
+#include "Core/GEngine.h"
 #include "sdl2/SDL.h"
+#include "Core/Log.h"
 #include <iostream>
 
 
@@ -26,11 +27,17 @@ namespace GEngine
 	bool Initialize()
 	{
 
+		Log::Init();
+		//GENGINE_CORE_ERROR("Hello, Welcome to the GEngine!");
+		//GENGINE_ASSERT(SDL_Init(SDL_INIT_EVERYTHING) < 0, "something wrong")
+
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		{
+			
 			std::cout << "Error initializing SDL2: " << SDL_GetError() << std::endl;
 			return false;
 		}
+
 		else
 		{
 			SDL_version version;

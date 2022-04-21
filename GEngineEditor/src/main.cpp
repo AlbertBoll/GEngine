@@ -1,4 +1,4 @@
-#include "GEngine/GEngine.h"
+#include "GEngine/Core/GEngine.h"
 #include <iostream>
 
 int main()

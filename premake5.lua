@@ -5,8 +5,7 @@ workspace "GEngine"
 	configurations
 	{
 		"Debug",
-		"Release",
-		"Dist"
+		"Release"
 	}
 
 tdir = "bin/%{cfg.buildcfg}/%{prj.name}"
@@ -15,6 +14,12 @@ odir = "bin-int/%{cfg.buildcfg}/%{prj.name}"
 -- External Dependencies
 externals = {}
 externals["sdl2"] = "external/sdl2"
+externals["spdlog"] = "external/spdlog"
+externals["glad"] = "external/glad"
+
+include "external/glad"
+
+--process glad before anything
 
 project "GEngine"
 	location "GEngine"
@@ -36,11 +41,18 @@ project "GEngine"
 	sysincludedirs
 	{
 		"%{prj.name}/include/%{prj.name}",
-		"%{externals.sdl2}/include"
+		"%{externals.sdl2}/include",
+		"%{externals.spdlog}/include",
+		"%{externals.glad}/include"
 		--"%{prj.name}/src"
 
 	}
 
+	defines
+	{
+		--Ensures glad doesn't include glfw
+		"GLFW_INCLUDE_NONE"
+	}
 
 	-- Windows
 	filter
@@ -136,14 +148,14 @@ project "GEngineEditor"
 
 	}
 
-		-- WIndows
+	-- Windows
 	filter
 	{
 		"system:windows",
 		"configurations:*"
 	}
 
-	systemversion "lastest"
+	systemversion "10.0"
 
 	defines
 	{
@@ -159,7 +171,8 @@ project "GEngineEditor"
 	{
 		"SDL2",
 		"SDL2main",
-		"SDL2test"
+		"SDL2test",
+		"glad"
 	}
 
 	-- Linux
@@ -174,6 +187,11 @@ project "GEngineEditor"
 			"GENGINE_PLATFORM_LINUX"
 		}
 
+		links
+		{
+			"SDL2",
+			"glad"
+		}
 
 	-- MACOS
 	filter
@@ -192,6 +210,12 @@ project "GEngineEditor"
 		defines
 		{
 			"GENGINE_PLATFORM_MAC"
+		}
+
+		links
+		{
+			"SDL2.framework",
+			"glad"
 		}
 
 	filter "configurations:Debug"
