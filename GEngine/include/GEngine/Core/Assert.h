@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseUtility.h"
-#include "Log.h"
+//#include "Log.h"
 #include <filesystem>
 
 
@@ -18,10 +18,12 @@
 	// Currently accepts at least the condition and one additional parameter (the message) being optional
 	#define GENGINE_ASSERT(...) GENGINE_EXPAND_MACRO( GENGINE_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_, __VA_ARGS__) )
 	#define GENGINE_CORE_ASSERT(...) GENGINE_EXPAND_MACRO( GENGINE_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_CORE_, __VA_ARGS__) )
+	#define ASSERT GENGINE_CORE_ASSERT
 
 #else
 	#define GENGINE_ASSERT(...)
 	#define GENGINE_CORE_ASSERT(...)
+	#define ASSERT(...)
 
 
 #endif

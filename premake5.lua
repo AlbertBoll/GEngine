@@ -144,7 +144,9 @@ project "GEngineEditor"
 	
 	sysincludedirs
 	{
-		"GEngine/include"
+		"GEngine/include",
+		"GEngine/include/GEngine",
+		"%{externals.spdlog}/include"
 
 	}
 

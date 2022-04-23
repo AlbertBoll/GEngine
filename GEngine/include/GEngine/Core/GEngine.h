@@ -1,10 +1,27 @@
 #pragma once
 
+#include "BaseUtility.h"
+#include "Window.h"
+
 namespace GEngine
 {
-	void GetInfo();
+	class GEngine
+	{
+	public:
 
-	bool Initialize();
+		GEngine() = default;
+		NONCOPYMOVABLE(GEngine);
+		~GEngine();
+		void GetEnvironmentInfo() const;
+		void Initialize(const WindowProperties& winProp = WindowProperties{});
+		Window* GetInternalWindow()const { return m_Window.get(); }
+		void Run();
+		
 
-	void Shutdown();
+	private:
+		ScopedPtr<Window>m_Window{};
+		volatile bool m_IsInitialize{false};
+		volatile bool m_Running{ true };
+
+	};
 }

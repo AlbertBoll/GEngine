@@ -1,7 +1,9 @@
 #pragma once
+
+
 #include "BaseUtility.h"
 
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 
 
 namespace GEngine
@@ -10,7 +12,7 @@ namespace GEngine
 	{
 
 	public:
-		static void Init();
+		static void Initialize();
 
 		
 		inline static RefPtr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
