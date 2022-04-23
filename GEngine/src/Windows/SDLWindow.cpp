@@ -1,6 +1,7 @@
 #include "Windows/SDLWindow.h"
 #include "sdl2/SDL.h"
-#include <glad/glad.h>
+#include <glad/glad.h> 
+#include "Core/Base.h"
 
 namespace GEngine
 {

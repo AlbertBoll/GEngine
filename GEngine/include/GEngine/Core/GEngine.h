@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseUtility.h"
+#include "Utility.h"
 #include "Window.h"
 
 namespace GEngine

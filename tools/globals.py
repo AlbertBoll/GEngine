@@ -1,7 +1,9 @@
 
+
 ENGINE_NAME = "GEngine"
 PROJECT_NAME = "GEngineEditor"
 TOOLS_DIR = "tools"
+CONFIG = "Debug"
 
 V_MAJOR = 1
 V_MINOR = 0
