@@ -1,9 +1,5 @@
 #pragma once
 
-#include <memory>
-
-
-
 #ifdef GENGINE_CONFIG_DEBUG
 	#if defined(GENGINE_PLATFORM_WINDOWS)
 		#define GENGINE_DEBUGBREAK() __debugbreak()
@@ -33,7 +29,7 @@
 
 #define BIT(x) (1 << x)
 
-#define BENGINE_BIND_EVENT(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+//#define BENGINE_BIND_EVENT(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
 
 

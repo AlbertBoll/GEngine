@@ -1,7 +1,6 @@
 
 #include <iostream>
-#include "GEngine/Core/GEngine.h"
-
+#include <GEngine/Core/BaseApp.h>
 
 
 
@@ -9,21 +8,27 @@
 int main(int argc, char* args[])
 {
 
+	GEngine::BaseApp app;
 
 
-	//constexpr BitFlags<WindowFlags, uint8_t> flag(WindowFlags::BORDERLESS, WindowFlags::FULLSCREEN);
-	//constexpr BitFlags<WindowFlags, uint8_t> flag_(WindowFlags::BORDERLESS, WindowFlags::INVISIBLE);
-	//std::cout << std::boolalpha;
-	//std::cout << flag.IsSet(WindowFlags::BORDERLESS) << std::endl;
+	GEngine::WindowProperties winProp1{ .m_Title = "GEngine Editor App1",
+									    .m_WinPos = GEngine::WindowPos::TopLeft,
+									    .m_XPaddingToCenterY = 5,
+									    .m_YPaddingToCenterX = 20,
+									 };
 
-	//std::cout << "Jellp" << std::endl;
+	GEngine::WindowProperties winProp2{ .m_Title = "GEngine Editor App2",
+								        .m_WinPos = GEngine::WindowPos::TopRight,
+								        .m_XPaddingToCenterY = 5,
+								        .m_YPaddingToCenterX = 20,
+	};
 
-	//std::cout << p->m_X << std::endl;
-		//Timeit(main);
-	
-	GEngine::GEngine Engine;
-	Engine.Initialize();
-	Engine.Run();
+	app.Initialize();
+	app.AddWindows(winProp1, winProp2);
+
+	app.Run();
+
+
 	return 0;
 
 }

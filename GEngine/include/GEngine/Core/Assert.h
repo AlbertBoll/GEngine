@@ -1,9 +1,5 @@
 #pragma once
 
-#include "Base.h"
-//#include "Log.h"
-#include <filesystem>
-
 
 #ifdef GENGINE_ENABLE_ASSERTS
 	// Alteratively we could use the same "default" message for both "WITH_MSG" and "NO_MSG" and

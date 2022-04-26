@@ -1,44 +1,16 @@
+
+#include "gepch.h"
 #include "Windows/SDLWindow.h"
-#include "sdl2/SDL.h"
-#include <glad/glad.h> 
-#include "Core/Base.h"
 
 namespace GEngine
 {
+
+	extern SDL_DisplayMode mode;
+	
+
 	void GEngine::SDLWindow::Initialize(const WindowProperties& winProp)
 	{
-		uint32_t flag = SDL_WINDOW_OPENGL;
-		
-
-		if (winProp.flag.IsSet(WindowFlags::INVISIBLE))
-		{
-			flag |= SDL_WINDOW_HIDDEN;
-		}
-
-		if (winProp.flag.IsSet(WindowFlags::FULLSCREEN))
-		{
-			flag |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-		}
-
-		if (winProp.flag.IsSet(WindowFlags::BORDERLESS))
-		{
-			flag |= SDL_WINDOW_BORDERLESS;
-		}
-
-		if (winProp.flag.IsSet(WindowFlags::RESIZABLE))
-		{
-			flag |= SDL_WINDOW_RESIZABLE;
-		}
-
-		//Initialize SDL
-		GENGINE_CORE_INFO("Initialize SDL");
-		SDL_Init(SDL_INIT_EVERYTHING);
-		////ASSERT(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER), "SDL initialize failure");
-
-		SDL_version version{};
-		SDL_VERSION(&version);
-
-		GENGINE_CORE_INFO("SDL {}.{}.{}", (uint32_t)version.major, (uint32_t)version.minor, (uint32_t)version.patch);
+		uint32_t flag = GetWindowFlag(winProp);
 	
 
 		// Set OpenGL attributes
@@ -63,7 +35,13 @@ namespace GEngine
 
 
 		//create SDL window
-		m_Window = SDL_CreateWindow(winProp.m_Title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, winProp.m_Width, winProp.m_Height, flag);
+		//GENGINE_CORE_INFO(SDL_WINDOWPOS_CENTERED);
+		//m_Window = SDL_CreateWindow(winProp.m_Title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, winProp.m_Width, winProp.m_Height, flag);
+		//m_Window = SDL_CreateWindow(winProp.m_Title.c_str(), winProp.m_TopLeftX, winProp.m_TopLeftY, winProp.m_Width, winProp.m_Height, flag);
+		//m_Window = SDL_CreateWindow(winProp.m_Title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, winProp.m_Width, winProp.m_Height, flag);
+
+		SetWindow(mode.w, mode.h, flag, winProp);
+		
 		ASSERT(m_Window, "SDL Window couldn't be created!");
 
 		m_ScreenWidth = winProp.m_Width;
@@ -75,21 +53,23 @@ namespace GEngine
 		m_Context = SDL_GL_CreateContext(m_Window);
 		ASSERT(m_Context, "SDL_GL context couldn't be created!");
 
+		int success = gladLoadGL();
 
 		//Load OpenGL Context
-		ASSERT(gladLoadGL(), "OpenGL functions coundn't be loaded!");
+		ASSERT(success, "OpenGL functions coundn't be loaded!");
 
-		#ifdef GENGINE_CONFIG_DEBUG
-			glClearColor(winProp.m_Red, winProp.m_Green, winProp.m_Blue, 1.0f);
+		
+		glClearColor(winProp.m_Red, winProp.m_Green, winProp.m_Blue, 1.0f);
 
-			//Enable depth test
-			glEnable(GL_DEPTH);
+		//Enable depth test
+		glEnable(GL_DEPTH);
+		glDepthFunc(GL_LEQUAL);
 
-			//Enable blending
-			glEnable(GL_BLEND);
-			glEnable(GL_MULTISAMPLE);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		#endif
+		//Enable blending
+		glEnable(GL_BLEND);
+		glEnable(GL_MULTISAMPLE);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
 
 		if (winProp.m_IsVsync)
 		{
@@ -119,5 +99,95 @@ namespace GEngine
 	void GEngine::SDLWindow::SetTitle(const std::string& title) const
 	{
 		SDL_SetWindowTitle(m_Window, title.c_str());
+	}
+
+	uint32_t SDLWindow::GetWindowID() const
+	{
+		ASSERT(m_Window, "Window can not be null!")
+		return SDL_GetWindowID(m_Window);
+	}
+
+	void SDLWindow::SetWindow(int DisplayWidth, int DisplayHeight, uint32_t flag, const WindowProperties& winProp)
+	{
+
+		int topLeftPosX{};
+		int topLeftPosY{};
+
+		switch (winProp.m_WinPos)
+		{
+		case WindowPos::TopLeft:
+			topLeftPosX = DisplayWidth / 2 - winProp.m_Width -   winProp.m_XPaddingToCenterY;
+			topLeftPosY = DisplayHeight / 2 - winProp.m_Height - winProp.m_YPaddingToCenterX;
+			break;
+		
+		case WindowPos::TopRight:
+			topLeftPosX = DisplayWidth / 2  + winProp.m_XPaddingToCenterY;
+			topLeftPosY = DisplayHeight / 2 - winProp.m_Height - winProp.m_YPaddingToCenterX;
+			break;
+
+		case WindowPos::ButtomLeft:
+			topLeftPosX = DisplayWidth / 2 - winProp.m_Width - winProp.m_XPaddingToCenterY;
+			topLeftPosY = DisplayHeight / 2 + winProp.m_YPaddingToCenterX;
+			break;
+
+		case WindowPos::ButtomRight:
+			topLeftPosX = DisplayWidth / 2  + winProp.m_XPaddingToCenterY;
+			topLeftPosY = DisplayHeight / 2 + winProp.m_YPaddingToCenterX;
+			break;
+
+		case WindowPos::Center:
+			topLeftPosX = DisplayWidth / 2 - winProp.m_Width / 2;
+			topLeftPosY = DisplayHeight / 2 - winProp.m_Height / 2;
+			break;
+
+		}
+
+		m_Window = SDL_CreateWindow(winProp.m_Title.c_str(), topLeftPosX, topLeftPosY, winProp.m_Width, winProp.m_Height, flag);
+
+
+	}
+
+
+	uint32_t SDLWindow::GetWindowFlag(const WindowProperties& winProp)
+	{
+		uint32_t flag = SDL_WINDOW_OPENGL;
+
+
+		if (winProp.flag.IsSet(WindowFlags::INVISIBLE))
+		{
+			flag |= SDL_WINDOW_HIDDEN;
+		}
+
+		if (winProp.flag.IsSet(WindowFlags::FULLSCREEN))
+		{
+			flag |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		}
+
+		if (winProp.flag.IsSet(WindowFlags::BORDERLESS))
+		{
+			flag |= SDL_WINDOW_BORDERLESS;
+		}
+
+		if (winProp.flag.IsSet(WindowFlags::RESIZABLE))
+		{
+			flag |= SDL_WINDOW_RESIZABLE;
+		}
+
+		return flag;
+	}
+
+	void SDLWindow::BeginRender() const
+	{
+		SDL_GL_MakeCurrent(m_Window, m_Context);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	}
+
+	void SDLWindow::EndRender() const
+	{
+		SwapBuffer();
+	}
+	std::string SDLWindow::GetTitle() const
+	{
+		return SDL_GetWindowTitle(m_Window);
 	}
 }

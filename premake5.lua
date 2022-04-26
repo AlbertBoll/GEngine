@@ -11,6 +11,7 @@ workspace "GEngine"
 tdir = "bin/%{cfg.buildcfg}/%{prj.name}"
 odir = "bin-int/%{cfg.buildcfg}/%{prj.name}"
 
+
 -- External Dependencies
 externals = {}
 externals["sdl2"] = "external/sdl2"
@@ -30,6 +31,10 @@ project "GEngine"
 
 	targetdir(tdir)
 	objdir(odir)
+
+	pchheader "gepch.h"
+	pchsource "%{prj.name}/src/gepch.cpp"
+
 
 	files
 	{
