@@ -1,6 +1,6 @@
 #pragma once
 #include "Utility.h"
-
+#include <string>
 
 namespace GEngine
 {
@@ -60,6 +60,7 @@ namespace GEngine
 		}
 	};
 
+	//abstract base class of window
 	class Window
 	{
 	public:
@@ -83,14 +84,14 @@ namespace GEngine
 
 	};
 
-	template<typename T>
+	/*template<typename T>
 	class WindowImpl : public Window
 	{
 	public:
-		Window* GetUnderlyingWindow() override
+		T* GetUnderlyingWindow() override
 		{
 			return static_cast<T*>(this);
 		}
-	};
+	};*/
 
 }

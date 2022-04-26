@@ -1,15 +1,16 @@
-
+import os
 
 ENGINE_NAME = "GEngine"
 PROJECT_NAME = "GEngineEditor"
 TOOLS_DIR = "tools"
-CONFIG = "Debug"
 
 V_MAJOR = 1
 V_MINOR = 0
 
 import sys, platform
 
+
+#CONFIG = "Debug" 
 PLATFORM = sys.platform
 
 for x in platform.uname():
@@ -27,3 +28,9 @@ def IsLinux():
 
 def IsMac():
     return PLATFORM == "darwin"
+
+
+
+
+
+  

@@ -1,8 +1,11 @@
 #pragma once
+
+//suppress the warning of macro redefinition
 #pragma warning (disable : 4005)
 
+//Since the NOMINMAX conflicts the standard library(std::min and std::max) using the following the
 #ifdef GENGINE_PLATFORM_WINDOWS
-	#ifndef NOMINMAX
+	#ifndef NOMINMAX   
 		#define NOMINMAX
 
 	#endif 

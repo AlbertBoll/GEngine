@@ -2,6 +2,7 @@
 
 #include "Timestep.h"
 #include "GEngine.h"
+#include "Window.h"
 
 namespace GEngine
 {

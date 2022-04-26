@@ -11,20 +11,16 @@ working_directory = os.getcwd();
   
 TOOLS_DIR = "tools"
 
-path = os.path.join(working_directory, TOOLS_DIR)
-
-sys.path.append(path)     
+Config = "Debug" if "-d" in sys.argv else "Release" # if "-r" in sys.argv else None
 
 
-import globals
-Config = "Debug"
 
-def RunCommand(cmd):
+def RunCommand(cmd, arg=""):
     ret = 0
     script = "{}/{}/{}.py".format(os.getcwd(), TOOLS_DIR, cmd)
     if os.path.exists(script):
         print("Executing: ", cmd)
-        ret = subprocess.call(["python", script])
+        ret = subprocess.call(["python", script, arg])
         return ret
 
     else:
@@ -33,53 +29,31 @@ def RunCommand(cmd):
 
     return ret
 
-   
-def ChangeConfig_(new_config):
-    #globals.CONFIG = new_config
-    Config = new_config
+
+def CaptureArg():
+    if "-d" in sys.argv:
+        return "-d"  #Debug
+    elif "-r" in sys.argv:
+        return "-r"  #Release
+
+    else:
+        return ""
 
 
-#def ChangeConfig():
-#    # print(sys.argv)
-#    if "-r" in sys.argv:
-#        globals.CONFIG = "Release"
-#        Config = "Release"
-#        print("Change to Release")
 
-#    elif "-d" in sys.argv[0]:
-#        globals.CONFIG = "Debug"
+if __name__ == "__main__":
 
-
-print(sys.argv)
-
-for i in range(1, len(sys.argv)):
-    
-    if "-r" in sys.argv:
-        ChangeConfig_("Release")
-        #print(globals.CONFIG)
-        #globals.CONFIG[0] = "Release"
-   
-
-    elif "-d" in sys.argv:
-         ChangeConfig_("Debug")
-         #globals.CONFIG = "Debug"
-
-
-    cmd = sys.argv[i]
-    if cmd.find("-") == -1:
+    arg = CaptureArg() 
+    length = len(sys.argv) - 1 if "-" in sys.argv[-1] else len(sys.argv) 
+    for i in range(1, length):
+        
+        cmd = sys.argv[i]
+       
         print("\n-----------------------------")
 
-        if RunCommand(cmd) != 0:
+        if RunCommand(cmd, arg) != 0:
             break
 
-    #else:
-    #    if cmd == "-r":
-    #        globals.CONFIG = "Release"
-
-    #    elif cmd == "-d":
-    #        globals.CONFIG = "Debug"
-
-        # print("\n-----------------------------")
         
 
        

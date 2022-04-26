@@ -1,5 +1,4 @@
 
-#include <iostream>
 #include <GEngine/Core/BaseApp.h>
 
 
@@ -8,6 +7,7 @@
 int main(int argc, char* args[])
 {
 
+	
 	GEngine::BaseApp app;
 
 
