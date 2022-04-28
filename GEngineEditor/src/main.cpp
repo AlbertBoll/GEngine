@@ -1,4 +1,3 @@
-
 #include <GEngine/Core/BaseApp.h>
 
 
@@ -7,7 +6,6 @@
 int main(int argc, char* args[])
 {
 
-	
 	GEngine::BaseApp app;
 
 
@@ -24,10 +22,12 @@ int main(int argc, char* args[])
 	};
 
 	app.Initialize();
-	app.AddWindows(winProp1, winProp2);
+	auto& engine = app.GetEngine();
+	engine.GetWindowManager().AddWindows(winProp1, winProp2);
 
 	app.Run();
-
+	
+	
 
 	return 0;
 
