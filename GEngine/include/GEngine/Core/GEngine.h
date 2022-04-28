@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Utility.h"
-#include "../Windows/WindowManager.h"
+#include "WindowManager.h"
 
 
 namespace GEngine

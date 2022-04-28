@@ -66,7 +66,7 @@ namespace GEngine
 	public:
 		uint32_t GetScreenWidth()const { return m_ScreenWidth; }
 		uint32_t GetScreenHeight()const { return m_ScreenWidth; }
-		virtual void Initialize(const WindowProperties& winProp) = 0;
+		virtual void Initialize(const WindowProperties& winProp = {}) = 0;
 		virtual void SwapBuffer()const = 0;
 		virtual void ShutDown() = 0;
 		virtual void SetTitle(const std::string& title) const = 0;
@@ -74,6 +74,8 @@ namespace GEngine
 		virtual uint32_t GetWindowID()const = 0;
 		virtual void BeginRender() const = 0;
 		virtual void EndRender() const = 0;
+
+		static ScopedPtr<Window> Create(const WindowProperties& winProp = {});
 
 		//virtual Window* GetUnderlyingWindow() = 0;
 

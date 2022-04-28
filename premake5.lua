@@ -70,7 +70,8 @@ project "GEngine"
 
 	defines
 	{
-		"GENGINE_PLATFORM_WINDOWS"
+		"GENGINE_PLATFORM_WINDOWS",
+		"GENGINE_WINDOW_SDL"
 	}
 
 	-- Linux

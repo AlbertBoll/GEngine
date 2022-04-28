@@ -1,6 +1,6 @@
 #include "gepch.h"
-#include "Windows/WindowManager.h"
-#include "Windows/SDLWindow.h"
+#include "Core/WindowManager.h"
+
 
 namespace GEngine
 {
@@ -23,7 +23,9 @@ namespace GEngine
 
 	void WindowManager::AddWindow(const std::string& title)
 	{
-		auto windowPtr = CreateScopedPtr<SDLWindow>();
+		GENGINE_CORE_INFO("Initialize Windows...");
+	
+		auto windowPtr = Window::Create();
 		windowPtr->Initialize();
 		windowPtr->SetTitle(title);
 		uint32_t ID = windowPtr->GetWindowID();
@@ -34,7 +36,8 @@ namespace GEngine
 	void WindowManager::AddWindows(const WindowProperties& winProp)
 	{
 		GENGINE_CORE_INFO("Initialize Windows...");
-		auto windowPtr = CreateScopedPtr<SDLWindow>();
+		
+		auto windowPtr = Window::Create();
 		windowPtr->Initialize(winProp);
 
 		uint32_t ID = windowPtr->GetWindowID();
