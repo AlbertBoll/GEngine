@@ -30,6 +30,8 @@ namespace GEngine
 
 		void AddWindows(const std::initializer_list<WindowProperties>& winProps);
 
+		void RemoveWindow(uint32_t ID);
+
 
 	private:
 		friend class GEngine;
