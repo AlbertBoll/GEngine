@@ -45,11 +45,20 @@ namespace GEngine
 		m_NumOfWindows++;
 	}
 
+
 	void WindowManager::AddWindows(const std::initializer_list<WindowProperties>& winProps)
 	{
 		for (auto& p : winProps)
 		{
 			AddWindows(p);
 		}
+	}
+
+
+	void WindowManager::RemoveWindow(uint32_t ID)
+	{
+		ASSERT(m_Windows[ID]);
+		m_Windows[ID]->ShutDown();
+		m_Windows.erase(ID);
 	}
 }
