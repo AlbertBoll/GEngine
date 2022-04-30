@@ -1,22 +1,12 @@
 #pragma once
 
 #include<functional>
-//#include<sdl2/SDL.h>
+
 
 namespace GEngine
 {
 
 #define BIND_EVENT_FN(fn) [this](auto&& ... args)->decltype(auto){return this->fn(std::forward<decltype(args)>(args)...); }
-
-
-	//typedef SDL_Event GEngineEvent;
-	//typedef SDL_EventType EventType;
-	//int(*PollEvent)(GEngineEvent*);
-	//PollEvent = SDL_PollEvent;
-	//typedef SDL_PollEvent PollEvent;
-
-	
-
 
 
 	template<typename... Args>
@@ -62,6 +52,15 @@ namespace GEngine
 		[[nodiscard]] const_iterator cbegin() const { return m_Callbacks.cbegin(); }
 
 		[[nodiscard]] const_iterator cend() const { return m_Callbacks.cend(); }
+
+
+		template<typename ... Args>
+		void Fire(Args&&... args)const
+		{
+
+			this->operator()(std::forward<Args>(args)...);
+
+		}
 
 		void operator()(Args&&... args)const
 		{

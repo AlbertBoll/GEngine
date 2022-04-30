@@ -1,5 +1,6 @@
 #include "gepch.h"
 #include "Core/GEngine.h"
+#include <Events/EventManager.h>
 //#include "Inputs/InputManager.h"
 //#include "core/WindowManager.h"
 
@@ -11,6 +12,8 @@ namespace GEngine
 
 	GEngine::~GEngine()
 	{
+
+		//since using scoped pointer, there is no need to release resource in destructor
 		/*if (m_WindowManager)
 		{
 			delete m_WindowManager;
@@ -96,11 +99,6 @@ namespace GEngine
 		}
 	}
 
-	WindowManager* GEngine::GetWindowManager()
-	{
-		return m_WindowManager.get();
-	}
-
 
 	void GEngine::Run()
 	{
@@ -109,10 +107,9 @@ namespace GEngine
 
 		while (m_Running) {
 
-			while (SDL_PollEvent(&event))
-			{
-				m_InputManager->ProcessEvent(event);
-			}
+	
+			m_InputManager->ProcessEvent(event);
+			
 
 			for (auto& p : m_WindowManager->m_Windows)
 			{

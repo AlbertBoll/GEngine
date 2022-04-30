@@ -93,7 +93,7 @@ namespace GEngine
 
 	void GEngine::SDLWindow::ShutDown() 
 	{
-		GENGINE_CORE_INFO("Release Window!");
+		//GENGINE_CORE_INFO("Release Window!");
 	
 			SDL_GL_DeleteContext(m_Context);
 			SDL_DestroyWindow(m_Window);

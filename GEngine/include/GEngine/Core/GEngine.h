@@ -15,12 +15,11 @@ namespace GEngine
 		~GEngine();
 		static GEngine& Get();
 		void Initialize();
-		WindowManager* GetWindowManager();
-		//void Run();
+		WindowManager* GetWindowManager() { return m_WindowManager.get(); }
+		InputManager* GetInputManager() { return m_InputManager.get(); }
 		void Run();
 		void ShutDown();
 		bool IsRunning()const { return m_Running; }
-		//bool SetIsRunning(bool run) { m_Running = run; }
 
 	private:
 		friend class BaseApp;

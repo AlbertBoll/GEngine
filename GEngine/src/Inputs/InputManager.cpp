@@ -1,8 +1,8 @@
 #include "gepch.h"
-//#include "sdl2/SDL.h"
 #include "Inputs/InputManager.h"
 #include "Core/BaseApp.h"
 #include "Core/WindowManager.h"
+#include "Events/EventManager.h"
 
 namespace GEngine
 {
@@ -96,11 +96,6 @@ namespace GEngine
     }
 
 
-  /*  InputManager& InputManager::Get()
-    {
-        static InputManager inputManager;
-        return inputManager;
-    }*/
 
     ScopedPtr<InputManager> InputManager::GetScopedInstance()
     {
@@ -222,7 +217,7 @@ namespace GEngine
 
     void InputManager::ProcessEvent(SDL_Event& event)
     {
-        auto& engine = BaseApp::GetEngine();
+        /*auto& engine = BaseApp::GetEngine();
         auto* windowsManager = engine.GetWindowManager();
         switch (event.type)
         {
@@ -233,9 +228,28 @@ namespace GEngine
                 GENGINE_CORE_INFO("Mouse moves to the {}. xPos: {}   yPos: {}", p->second->GetTitle(), event.motion.x, event.motion.y);
             }
             break;
+
+        case SDL_MOUSEBUTTONDOWN:
+            
+            if (auto p = windowsManager->GetWindows().find(event.button.windowID); p != windowsManager->GetWindows().end())
+            {
+                if(event.button.clicks == 1)
+                    GENGINE_CORE_INFO("Mouse was clicked at {}. Window coords ({}, {})", p->second->GetTitle(), event.button.x, event.button.y);
+                else
+                    GENGINE_CORE_INFO("Mouse was double clicked at {}. Window coords ({}, {})", p->second->GetTitle(), event.button.x, event.button.y);
+            }
+            break;
+
+        case SDL_MOUSEBUTTONUP:
+          
+            if (auto p = windowsManager->GetWindows().find(event.button.windowID); p != windowsManager->GetWindows().end())
+            {
+         
+                    GENGINE_CORE_INFO("Mouse button was release at {}. Window coords ({}, {})", p->second->GetTitle(), event.button.x, event.button.y);
+            }
+            break;
         
         case SDL_KEYDOWN:
-            
             //auto character = event.key.keysym.sym;
             GENGINE_CORE_INFO("Key {} was pressed", SDL_GetKeyName(event.key.keysym.sym));
             break;
@@ -243,7 +257,7 @@ namespace GEngine
         case SDL_KEYUP:
 
             //auto character = event.key.keysym.sym;
-            GENGINE_CORE_INFO("Key {} was Release", SDL_GetKeyName(event.key.keysym.sym));
+            GENGINE_CORE_INFO("Key {} was released", SDL_GetKeyName(event.key.keysym.sym));
             break;
         
 
@@ -290,12 +304,10 @@ namespace GEngine
          
             break;
 
-      
 
+        }*/
 
-
-
-        }
+        EventManager::OnUpdate(event);
     }
 
 

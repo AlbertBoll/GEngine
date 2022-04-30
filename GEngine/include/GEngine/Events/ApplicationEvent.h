@@ -1,5 +1,5 @@
 #pragma once
-#include <sdl2/SDL_events.h>
+
 
 namespace GEngine
 {
@@ -7,12 +7,11 @@ namespace GEngine
 	class ApplicationEvent
 	{
 
-		typedef SDL_WindowEvent WindowEvent;
-
 	public:
-
+		static void OnWindowClose(SDL_WindowEvent& e);
+		static void OnWindowResize(SDL_WindowEvent& e);
+		static void OnAppQuit();
 
 	};
-
 
 }

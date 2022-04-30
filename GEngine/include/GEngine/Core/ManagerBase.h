@@ -4,7 +4,7 @@
 namespace GEngine
 {
 
-	//CRTP......Any concreate manager class derived from ManagerBase template class will be singleton and using CRTP to Get instance of T
+	//CRTP......Any concreate manager class derived from ManagerBase template class will be singleton and using CRTP to Get unique instance of T
 	template<typename T>
 	class ManagerBase
 	{

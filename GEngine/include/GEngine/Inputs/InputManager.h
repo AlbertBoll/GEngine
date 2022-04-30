@@ -36,7 +36,7 @@ namespace GEngine
 	{
 	public:
 		ButtonState GetKeyState(GEngineKeyCode keyCode)const;
-		bool IsKeyHold(GEngineKeyCode keyCode)const { return GetKeyState(keyCode) == ButtonState::Held; };
+		bool IsKeyHeld(GEngineKeyCode keyCode)const { return GetKeyState(keyCode) == ButtonState::Held; };
 		bool IsKeyPressed(GEngineKeyCode keyCode)const { return GetKeyState(keyCode) == ButtonState::Pressed; };
 		bool IsKeyReleased(GEngineKeyCode keyCode)const { return GetKeyState(keyCode) == ButtonState::Released; };
 
@@ -62,6 +62,7 @@ namespace GEngine
 		bool isButtonReleased(int button) const { return GetButtonState(button) == ButtonState::Released; }
 
 	private:
+		friend class MouseEvent;
 		friend class InputManager;
 		Vector2 m_MousePos;
 		Vector2 m_ScrollWheel;
@@ -139,6 +140,7 @@ namespace GEngine
 		void ProcessEvent(SDL_Event& event);
 
 		const InputState& GetInputState() const { return m_InputState; }
+		InputState& GetInputState(){ return m_InputState; }
 
 		void SetRelativeMouseMode(bool value);
 
