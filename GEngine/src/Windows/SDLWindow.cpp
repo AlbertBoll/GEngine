@@ -8,6 +8,11 @@ namespace GEngine
 	extern SDL_DisplayMode mode;
 	
 
+	SDLWindow::~SDLWindow()
+	{
+	
+	}
+
 	void GEngine::SDLWindow::Initialize(const WindowProperties& winProp)
 	{
 		uint32_t flag = GetWindowFlag(winProp);
@@ -88,11 +93,14 @@ namespace GEngine
 
 	void GEngine::SDLWindow::ShutDown() 
 	{
-		SDL_GL_DeleteContext(m_Context);
-		SDL_DestroyWindow(m_Window);
+		GENGINE_CORE_INFO("Release Window!");
+	
+			SDL_GL_DeleteContext(m_Context);
+			SDL_DestroyWindow(m_Window);
+			m_Context = nullptr;
+			m_Window = nullptr;
 		
-		m_Context = nullptr;
-		m_Window = nullptr;
+		
 		//SDL_Quit();
 	}
 
@@ -182,12 +190,27 @@ namespace GEngine
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
+
 	void SDLWindow::EndRender() const
 	{
 		SwapBuffer();
 	}
+
+
 	std::string SDLWindow::GetTitle() const
 	{
 		return SDL_GetWindowTitle(m_Window);
 	}
+
+
+	void SDLWindow::OnResize(int new_width, int new_height)
+	{
+		m_ScreenWidth = new_width;
+		m_ScreenHeight = new_height;
+
+	}
+
+
+	
+
 }

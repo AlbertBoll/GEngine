@@ -15,11 +15,19 @@ namespace GEngine
 		}
 	}
 
-	WindowManager& WindowManager::Get()
+	ScopedPtr<WindowManager> WindowManager::GetScopedInstance()
+	{
+		struct MkUniEnablr : public WindowManager {};
+		auto instance = CreateScopedPtr<MkUniEnablr>();
+
+		return instance;
+	}
+
+	/*WindowManager& WindowManager::Get()
 	{
 		static WindowManager windowManager;
 		return windowManager;
-	}
+	}*/
 
 	void WindowManager::AddWindow(const std::string& title)
 	{

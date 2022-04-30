@@ -64,6 +64,8 @@ namespace GEngine
 	class Window
 	{
 	public:
+
+		virtual ~Window(){};
 		uint32_t GetScreenWidth()const { return m_ScreenWidth; }
 		uint32_t GetScreenHeight()const { return m_ScreenWidth; }
 		virtual void Initialize(const WindowProperties& winProp = {}) = 0;
@@ -74,14 +76,15 @@ namespace GEngine
 		virtual uint32_t GetWindowID()const = 0;
 		virtual void BeginRender() const = 0;
 		virtual void EndRender() const = 0;
+		virtual void OnResize(int new_width, int new_height) = 0;
 
+	
 		static ScopedPtr<Window> Create(const WindowProperties& winProp = {});
+
 
 		//virtual Window* GetUnderlyingWindow() = 0;
 
-
 	protected:
-		//SDL_Window* m_Window{};
 		uint32_t m_ScreenWidth, m_ScreenHeight;
 
 	};
@@ -95,5 +98,8 @@ namespace GEngine
 			return static_cast<T*>(this);
 		}
 	};*/
+
+
+
 
 }

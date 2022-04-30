@@ -13,11 +13,11 @@ namespace GEngine
 
         SDLWindow() = default;
         NONCOPYABLE(SDLWindow);
-
+        virtual ~SDLWindow();
         // Inherited via Window
         virtual void Initialize(const WindowProperties& winProp = WindowProperties{}) override;
         virtual void SwapBuffer() const override;
-        virtual void ShutDown() override;
+        virtual void ShutDown() override; 
         virtual void SetTitle(const std::string& title) const override;
 
         // Inherited via Window
@@ -34,8 +34,6 @@ namespace GEngine
         void* m_Context{};
 
 
-      
-
 
         // Inherited via Window
         virtual void BeginRender() const override;
@@ -45,6 +43,13 @@ namespace GEngine
 
         // Inherited via Window
         virtual std::string GetTitle() const override;
+
+
+        // Inherited via Window
+        virtual void OnResize(int new_width, int new_height) override;
+
+
+
 
     };
 }

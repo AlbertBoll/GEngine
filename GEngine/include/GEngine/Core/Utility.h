@@ -1,5 +1,6 @@
 #pragma once
 #include<memory>
+#include<utility>
 
 namespace GEngine
 {
@@ -26,7 +27,7 @@ namespace GEngine
 	template<typename T, typename deleter, typename ... Args>
 	constexpr ScopedPtr<T, deleter> CreateScopedPtr(Args&& ... args)
 	{
-		return std::unique_ptr<T, deleter>(new T{ std::forward<Args>(args)... }, deleter{});
+		return std::unique_ptr<T, deleter>(new T{ std::forward<Args>(args)... });
 	}
 
 

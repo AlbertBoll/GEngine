@@ -1,7 +1,7 @@
 #include "gepch.h"
 #include "Core/GEngine.h"
-
-
+//#include "Inputs/InputManager.h"
+//#include "core/WindowManager.h"
 
 namespace GEngine
 {
@@ -16,6 +16,9 @@ namespace GEngine
 			delete m_WindowManager;
 			m_WindowManager = nullptr;
 		}*/
+
+		//delete m_InputManager;
+		//delete m_WindowManager;
 	
 	}
 
@@ -79,56 +82,46 @@ namespace GEngine
 			SDL_GetDesktopDisplayMode(0, &mode);
 			GENGINE_CORE_INFO("Display width: {}. Display height: {}. Refresh Rate: {}", mode.w, mode.h, mode.refresh_rate);
 
+			GENGINE_CORE_INFO("Initialize WindowManager");
 			
-			m_IsInitialize = true;
+			m_WindowManager = WindowManager::GetScopedInstance();
 
+			GENGINE_CORE_INFO("Initialize InputManager");
+			
+			m_InputManager = InputManager::GetScopedInstance();
+			m_InputManager->Initialize();
+
+			m_IsInitialize = true;
+			
 		}
+	}
+
+	WindowManager* GEngine::GetWindowManager()
+	{
+		return m_WindowManager.get();
 	}
 
 
 	void GEngine::Run()
 	{
+		
 		SDL_Event event;
 
 		while (m_Running) {
 
-			while (SDL_PollEvent(&event)) {
-
-				if (event.type == SDL_MOUSEMOTION)
-				{
-					if (auto p = m_WindowManager.m_Windows.find(event.motion.windowID); p != m_WindowManager.m_Windows.end())
-					{
-						GENGINE_CORE_INFO("Mouse moves to the {}. xPos: {}   yPos: {}", p->second->GetTitle(), event.motion.x, event.motion.y);
-					}
-				}
-
-				if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE)
-				{
-					if (auto p = m_WindowManager.m_Windows.find(event.window.windowID); p != m_WindowManager.m_Windows.end())
-					{
-
-						p->second->ShutDown();
-
-						if (--m_WindowManager.m_NumOfWindows == 0) {
-							ShutDown();
-							break;
-						}
-
-					}
-				}
-
-				for (auto& p : m_WindowManager.m_Windows)
-				{
-
-					p.second->BeginRender();
-					p.second->EndRender();
-				}
-
-
+			while (SDL_PollEvent(&event))
+			{
+				m_InputManager->ProcessEvent(event);
 			}
 
+			for (auto& p : m_WindowManager->m_Windows)
+			{
 
+				p.second->BeginRender();
+				p.second->EndRender();
+			}
 		}
+
 
 	}
 

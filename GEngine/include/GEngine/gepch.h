@@ -15,7 +15,7 @@
 #include <map>
 #include <unordered_map>
 #include <unordered_set>
-
+#include <limits>
 #include <memory>
 #include <vector>
 #include <glad/glad.h> 
@@ -28,6 +28,7 @@
 //#include "Core/Utility.h"
 #include "Core/Log.h"
 #include "Core/Base.h"
+#include "Math/Math.h"
 
 #ifdef GENGINE_PLATFORM_WINDOWS
 	#include<Windows.h>

@@ -3,7 +3,7 @@
 namespace GEngine
 {
 
-	class InputSystem
+	class MouseEvent
 	{
 
 	};

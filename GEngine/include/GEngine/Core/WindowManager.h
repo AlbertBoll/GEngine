@@ -2,20 +2,22 @@
 
 #include <unordered_map>
 #include "Window.h"
-
+#include "ManagerBase.h"
 
 namespace GEngine
 {
 
-	class WindowManager
+	class WindowManager: public ManagerBase<WindowManager>
 	{
-		
-	public:
+		//declare friend ManagerBase to invoke managerbase Get()    
+		friend class ManagerBase<WindowManager>;
 
+	public:
 		
-		NONCOPYMOVABLE(WindowManager);//Mark WindowManager is non copyable and non movable
+		
 		~WindowManager();
-		static WindowManager& Get();
+		static ScopedPtr<WindowManager> GetScopedInstance();
+
 		//void Initialize();
 		Window* GetInternalWindow(uint32_t ID){ return m_Windows.at(ID).get(); }
 
@@ -30,10 +32,14 @@ namespace GEngine
 
 		void AddWindows(const std::initializer_list<WindowProperties>& winProps);
 
+		uint8_t& GetNumOfWindows() { return m_NumOfWindows; }
+		uint8_t GetNumOfWindows()const { return m_NumOfWindows; }
+
 		void RemoveWindow(uint32_t ID);
 
 
 	private:
+
 		friend class GEngine;
 		WindowManager() = default;
 

@@ -1,6 +1,6 @@
-#include <GEngine/Core/BaseApp.h>
-
-
+#include<iostream>
+#include<GEngine/Core/BaseApp.h>
+#include<GEngine/Core/WindowManager.h>
 
 
 int main(int argc, char* args[])
@@ -23,11 +23,11 @@ int main(int argc, char* args[])
 
 	app.Initialize();
 	auto& engine = app.GetEngine();
-	engine.GetWindowManager().AddWindows(winProp1, winProp2);
+	engine.GetWindowManager()->AddWindows(winProp1, winProp2);
 
 	app.Run();
 	
-	
+	std::cout << "Finish" << std::endl;
 
 	return 0;
 

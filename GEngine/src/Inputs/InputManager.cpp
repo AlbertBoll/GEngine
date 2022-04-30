@@ -1,4 +1,5 @@
 #include "gepch.h"
+//#include "sdl2/SDL.h"
 #include "Inputs/InputManager.h"
 #include "Core/BaseApp.h"
 #include "Core/WindowManager.h"
@@ -6,7 +7,8 @@
 namespace GEngine
 {
 
-   
+
+
     ButtonState KeyboardState::GetKeyState(GEngineKeyCode keyCode) const
     {
         if (m_PreviousState[keyCode] == 0)
@@ -93,6 +95,21 @@ namespace GEngine
 
     }
 
+
+  /*  InputManager& InputManager::Get()
+    {
+        static InputManager inputManager;
+        return inputManager;
+    }*/
+
+    ScopedPtr<InputManager> InputManager::GetScopedInstance()
+    {
+        struct MkUniEnablr : public InputManager {};
+        auto instance = CreateScopedPtr<MkUniEnablr>();
+        // do something with instance
+
+        return instance;
+    }
 
     void InputManager::Initialize()
     {
@@ -203,7 +220,7 @@ namespace GEngine
     }
 
 
-    void InputManager::ProcessEvent(GEngineEvent& event)
+    void InputManager::ProcessEvent(SDL_Event& event)
     {
         auto& engine = BaseApp::GetEngine();
         auto* windowsManager = engine.GetWindowManager();
@@ -216,7 +233,19 @@ namespace GEngine
                 GENGINE_CORE_INFO("Mouse moves to the {}. xPos: {}   yPos: {}", p->second->GetTitle(), event.motion.x, event.motion.y);
             }
             break;
+        
+        case SDL_KEYDOWN:
+            
+            //auto character = event.key.keysym.sym;
+            GENGINE_CORE_INFO("Key {} was pressed", SDL_GetKeyName(event.key.keysym.sym));
+            break;
 
+        case SDL_KEYUP:
+
+            //auto character = event.key.keysym.sym;
+            GENGINE_CORE_INFO("Key {} was Release", SDL_GetKeyName(event.key.keysym.sym));
+            break;
+        
 
         case SDL_MOUSEWHEEL:
             m_InputState.m_Mouse.m_ScrollWheel = Vector2(
@@ -254,7 +283,7 @@ namespace GEngine
                 auto new_height = event.window.data2;
                 if (auto p = windowsManager->GetWindows().find(event.window.windowID); p != windowsManager->GetWindows().end())
                 {
-
+                    p->second->OnResize(new_width, new_height);
                     GENGINE_CORE_INFO("Window with title {} has been resized to ({}, {})", p->second->GetTitle(), new_width, new_height);
                 }
             }

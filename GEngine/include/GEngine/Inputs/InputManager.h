@@ -1,9 +1,10 @@
 #pragma once
 
-//#include "sdl2/SDL.h"
+
 #include "../Core/KeyCodes.h"
 #include "../Core/ControllerCodes.h"
 #include "../Math/Math.h"
+#include "../Core/ManagerBase.h"
 
 
 #define GENGINE_MAX_KEYCODES 512
@@ -11,6 +12,8 @@
 #define GENGINE_CONTROLLER_BUTTON_MAX 21
 
 
+union SDL_Event;
+struct _SDL_GameController;
 
 namespace GEngine
 {
@@ -18,9 +21,6 @@ namespace GEngine
 	using namespace Key;
 	using namespace Controller;
 
-	typedef SDL_Event GEngineEvent;
-	typedef SDL_EventType EventType;
-	typedef SDL_GameController GENGINE_GameController;
 
 	enum class ButtonState
 	{
@@ -118,10 +118,14 @@ namespace GEngine
 	};
 
 
-	class InputManager
+	class InputManager: public ManagerBase<InputManager>
 	{
-
+		friend class ManagerBase<InputManager>;
 	public:
+
+		
+		static ScopedPtr<InputManager> GetScopedInstance();
+
 		void Initialize();
 		void ShutDown();
 
@@ -132,20 +136,22 @@ namespace GEngine
 		void Update();
 
 		// Called to process an event 
-		void ProcessEvent(GEngineEvent& event);
+		void ProcessEvent(SDL_Event& event);
 
 		const InputState& GetInputState() const { return m_InputState; }
 
 		void SetRelativeMouseMode(bool value);
 
 	private:
+		InputManager() = default;
+		friend class GEngine;
 		float Filter1D(int input);
 		Vector2 Filter2D(int inputX, int inputY);
 
 
 	private:
 		InputState m_InputState;
-		GENGINE_GameController* m_GameController{};
+		_SDL_GameController* m_GameController{};
 
 	};
 

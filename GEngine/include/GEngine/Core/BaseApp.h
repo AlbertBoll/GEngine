@@ -18,7 +18,7 @@ namespace GEngine
 
 	    static GEngine& GetEngine(){ return m_GEngine;};
 
-	    WindowManager& GetWindowManager() { return m_GEngine.GetWindowManager(); };
+	    WindowManager* GetWindowManager() { return m_GEngine.GetWindowManager(); };
 	    void Initialize();
 		
 		virtual void Update(Timestep ts){};
