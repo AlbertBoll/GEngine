@@ -91,7 +91,7 @@ namespace GEngine
 
 			GENGINE_CORE_INFO("Initialize InputManager");
 			
-			m_InputManager = InputManager::GetScopedInstance();
+			m_InputManager = Input::InputManager::GetScopedInstance();
 			m_InputManager->Initialize();
 
 			m_IsInitialize = true;

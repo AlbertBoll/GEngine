@@ -4,11 +4,11 @@
 #include "Events/KeyboardEvent.h"
 #include "Events/ApplicationEvent.h"
 
-namespace GEngine
+namespace GEngine::Event
 {
 
 
-	void GEngine::EventManager::OnUpdate(SDL_Event& e)
+	void EventManager::OnUpdate(SDL_Event& e)
 	{
 
 		while(SDL_PollEvent(&e))

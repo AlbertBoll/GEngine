@@ -25,10 +25,14 @@
 #include <iostream>
 #include <functional>
 #include "sdl2/SDL.h"
+#include <fstream>
 //#include "Core/Utility.h"
 #include "Core/Log.h"
 #include "Core/Base.h"
-#include "Math/Math.h"
+#include <limits>
+#include "glm/glm.hpp"
+#include "glm/gtc/quaternion.hpp"
+//#include "Math/Math.h"
 
 #ifdef GENGINE_PLATFORM_WINDOWS
 	#include<Windows.h>

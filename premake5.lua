@@ -39,6 +39,8 @@ project "GEngine"
 	files
 	{
 		"%{prj.name}/include/**.h",
+		"%{prj.name}/include/**.cpp",
+		"%{prj.name}/include/**.hpp",
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp"
 	}
@@ -46,6 +48,7 @@ project "GEngine"
 	sysincludedirs
 	{
 		"%{prj.name}/include/%{prj.name}",
+		"%{prj.name}/include/external",
 		"%{externals.sdl2}/include",
 		"%{externals.spdlog}/include",
 		"%{externals.glad}/include"
@@ -150,8 +153,10 @@ project "GEngineEditor"
 	
 	sysincludedirs
 	{
-		"GEngine/include"
-		--"GEngine/include/GEngine",
+		"GEngine/include",
+		"GEngine/include/external",
+		"GEngine/include/GEngine",
+		"%{externals.glad}/include"
 		--"%{externals.spdlog}/include"
 
 	}

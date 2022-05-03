@@ -68,6 +68,7 @@ namespace GEngine
 
 	void MouseEvent::OnMouseWheel(SDL_MouseWheelEvent& e)
 	{
+		using namespace Input;
 
 		auto& engine = BaseApp::GetEngine();
 		auto* inputManager = engine.GetInputManager();

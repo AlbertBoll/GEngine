@@ -2,7 +2,7 @@
 
 
 
-namespace GEngine
+namespace GEngine::Event
 {
 	class EventManager
 	{

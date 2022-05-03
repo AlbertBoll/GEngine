@@ -1,10 +1,10 @@
 #pragma once
 
 
-#include "../Core/KeyCodes.h"
-#include "../Core/ControllerCodes.h"
-#include "../Math/Math.h"
-#include "../Core/ManagerBase.h"
+#include "Core/KeyCodes.h"
+#include "Core/ControllerCodes.h"
+#include "Core/ManagerBase.h"
+#include "Math/Math.h"
 
 
 #define GENGINE_MAX_KEYCODES 512
@@ -15,7 +15,7 @@
 union SDL_Event;
 struct _SDL_GameController;
 
-namespace GEngine
+namespace GEngine::Input
 {
 	using namespace Math;
 	using namespace Key;

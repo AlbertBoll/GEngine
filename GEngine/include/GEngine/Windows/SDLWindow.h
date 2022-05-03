@@ -7,7 +7,7 @@ namespace GEngine
 {
 
 
-    class SDLWindow: public Window//public WindowImpl<SDLWindow>
+    class SDLWindow: public Window
     {
     public:
 

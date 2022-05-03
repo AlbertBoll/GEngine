@@ -4,7 +4,7 @@
 #include "Core/WindowManager.h"
 #include "Events/EventManager.h"
 
-namespace GEngine
+namespace GEngine::Input
 {
 
 
@@ -307,7 +307,7 @@ namespace GEngine
 
         }*/
 
-        EventManager::OnUpdate(event);
+        Event::EventManager::OnUpdate(event);
     }
 
 

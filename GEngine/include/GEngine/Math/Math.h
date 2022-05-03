@@ -1,11 +1,30 @@
 #pragma once
-#include <limits>
 
+#include "glm/glm.hpp"
+#include "glm/gtc/quaternion.hpp"
 
 namespace GEngine
 {
+
+
+
 	namespace Math
 	{
+
+		typedef glm::vec2  Vec2f;
+		typedef glm::vec3  Vec3f;
+		typedef glm::vec4  Vec4f;
+		typedef glm::ivec2 iVec2;
+		typedef glm::ivec3 iVec3;
+		typedef glm::ivec4 iVec4;
+		typedef glm::mat4  Mat4;
+		typedef glm::mat3  Mat3;
+		typedef glm::mat2  Mat2;
+		typedef glm::quat  Quat;
+
+
+
+
 		const float Pi = 3.1415926535f;
 		const float TwoPi = Pi * 2.0f;
 		const float PiOver2 = Pi / 2.0f;

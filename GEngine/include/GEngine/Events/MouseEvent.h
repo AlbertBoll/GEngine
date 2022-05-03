@@ -3,10 +3,11 @@
 
 namespace GEngine
 {
+	
 
 	class MouseEvent
 	{
-
+		
 	public:
 		static void OnMouseButtonClick(SDL_MouseButtonEvent& e);
 		static void OnMouseButtonRelease(SDL_MouseButtonEvent& e);
