@@ -239,19 +239,19 @@ namespace GEngine::Graphic
 	}
 
 
-	void Shader::BindAttribLocation(GLuint location, const char* name) const
+	void Shader::BindAttribLocation(unsigned int location, const char* name) const
 	{
 		glBindAttribLocation(m_ProgramHandle, location, name);
 	}
 
 
-	void Shader::BindFragDataLocation(GLuint location, const char* name) const
+	void Shader::BindFragDataLocation(unsigned int location, const char* name) const
 	{
 		glBindFragDataLocation(m_ProgramHandle, location, name);
 	}
 
 
-	const char* Shader::GetTypeString(GLenum type)
+	const char* Shader::GetTypeString(unsigned int type)
 	{
 		// There are many more types than are covered here, but
 		// these are the most common in these examples.
@@ -393,6 +393,13 @@ namespace GEngine::Graphic
 	}
 
 
+	void Shader::BindTextureUniform(unsigned int TexID, unsigned int TexUnit, unsigned int TexTarget)
+	{
+		glActiveTexture(GL_TEXTURE0 + TexUnit);
+		glBindTexture(TexTarget, TexID);
+	}
+
+
 	GLuint Shader::GetUniformLocation(const char* name)
 	{
 		if (const auto pos = m_UniformLocations.find(name); pos != m_UniformLocations.end())
@@ -454,6 +461,30 @@ namespace GEngine::Graphic
 		return "";
 	}
 	
+	//template specialization of SetUniform for std::pair
+	template<>
+	void Shader::SetUniform<std::pair<GLuint, GLuint>>(const char* name, const std::pair<GLuint, GLuint>& textureBinding)
+	{
+		auto& [textureID, textureUnit] = textureBinding;
+		glActiveTexture(GL_TEXTURE0 + textureUnit);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		const GLint loc = GetUniformLocation(name);
+		glUniform1i(loc, textureUnit);
+	}
+
+
+	//template specialization of SetUniform for std::pair(std::pair)
+	template<>
+	void Shader::SetUniform<std::pair<GLuint, std::pair<GLuint, GLuint>>>(const char* name, const std::pair<GLuint, std::pair<GLuint, GLuint>>& textureBinding)
+	{
+		auto& [textureID, textureUnit] = textureBinding.second;
+		glActiveTexture(GL_TEXTURE0 + textureUnit);
+		glBindTexture(textureBinding.first, textureID);
+		const GLint loc = GetUniformLocation(name);
+		glUniform1i(loc, textureUnit);
+	}
+
+
 	
 	using namespace Math;
 

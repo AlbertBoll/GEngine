@@ -1,32 +1,32 @@
 #pragma once
-#include <glad/glad.h>
-//#include <string>
-//#include <map>
+
+#include <map>
 #include "Math/Math.h"
-
-
 
 
 namespace GEngine::Graphic
 {
+	//Helper macro to set vector uniform 
 	#define SET_UNIFORM_IMPL(gl_Func, tType, dType) \
 	template<> void Shader::Set<tType>(const char* name, tType* data, unsigned int length) {\
-										gl_Func(GetUniformLocation(name), static_cast<GLsizei>(length), (dType*)&data[0]);\
+										gl_Func(GetUniformLocation(name), static_cast<int>(length), (dType*)&data[0]);\
 	}
 
+
+	//Helper macro to set matrix uniform  
 	#define SET_MATRIX_IMPL(gl_Func, tType, dType) \
 	template<> void Shader::Set<tType>(const char* name, tType* data, unsigned int length) {\
-										gl_Func(GetUniformLocation(name), static_cast<GLsizei>(length), GL_FALSE, (dType*)&data[0][0]);\
+										gl_Func(GetUniformLocation(name), static_cast<int>(length), false, (dType*)&data[0][0]);\
 	}
 
 	enum ShaderType
 	{
-		VERTEX = GL_VERTEX_SHADER,
-		FRAGMENT = GL_FRAGMENT_SHADER,
-		GEOMETRY = GL_GEOMETRY_SHADER,
-		TESS_CONTROL = GL_TESS_CONTROL_SHADER,
-		TESS_EVALUATION = GL_TESS_EVALUATION_SHADER,
-		COMPUTE = GL_COMPUTE_SHADER
+		VERTEX = 0x8B31,
+		FRAGMENT = 0x8B30,
+		GEOMETRY = 0x8DD9,
+		TESS_CONTROL = 0x8E88,
+		TESS_EVALUATION = 0x8E87,
+		COMPUTE = 0x91B9
 	};
 
 
@@ -53,14 +53,17 @@ namespace GEngine::Graphic
 		[[nodiscard]] int GetHandle() const;
 		[[nodiscard]] bool IsLinked() const;
 
-		void BindAttribLocation(GLuint location, const char* name) const;
-		void BindFragDataLocation(GLuint location, const char* name) const;
-		static const char* GetTypeString(GLenum type);
+		void BindAttribLocation(unsigned int location, const char* name) const;
+		void BindFragDataLocation(unsigned int location, const char* name) const;
+		static const char* GetTypeString(unsigned int type);
+
+		//void BindTextureUniform(int )
 
 		void FindUniformLocations();
 		void PrintActiveUniforms() const;
 		void PrintActiveUniformBlocks() const;
 		void PrintActiveAttribs() const;
+		void BindTextureUniform(unsigned int TexID, unsigned int TexUnit, unsigned int TexTarget);
 
 		template<typename T>
 		void SetUniform(const char* name, const T& data){ Set(name, (T*)(&data), 1); };
@@ -70,7 +73,7 @@ namespace GEngine::Graphic
 
 
 	private:
-		GLuint GetUniformLocation(const char* name);
+		unsigned int GetUniformLocation(const char* name);
 		void DetachAndDeleteShaderObjects()const;
 		static bool FileExists(const std::string& fileName);
 		static std::string GetExtension(const char* name);
@@ -81,7 +84,7 @@ namespace GEngine::Graphic
 		
 
 	private:
-		GLuint m_ProgramHandle{};
+		unsigned int m_ProgramHandle{};
 		bool m_Linked{};
 		std::map<std::string, int> m_UniformLocations;
 
