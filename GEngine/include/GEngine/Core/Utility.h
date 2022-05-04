@@ -1,6 +1,7 @@
 #pragma once
 #include<memory>
 #include<utility>
+#include<variant>
 
 namespace GEngine
 {
@@ -82,6 +83,13 @@ namespace GEngine
 	private:
 		Value m_Value;
 	};
+
+
+	inline std::variant<std::false_type, std::true_type> bool_variant(bool condition)
+	{
+		if (condition) return std::true_type{};
+		else return std::false_type{};
+	}
 
 }
 
