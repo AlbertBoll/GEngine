@@ -155,8 +155,8 @@ project "GEngineEditor"
 	{
 		"GEngine/include",
 		"GEngine/include/external",
-		"GEngine/include/GEngine",
-		"%{externals.glad}/include"
+		"GEngine/include/GEngine"
+		--"%{externals.glad}/include"
 		--"%{externals.spdlog}/include"
 
 	}
