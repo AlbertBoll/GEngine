@@ -32,7 +32,7 @@ namespace GEngine::Buffer
 	{
 		glGenVertexArrays(1, &m_VertexArrayRef);
 		ASSERT(0 != m_VertexArrayRef);
-		glBindVertexArray(m_VertexArrayRef);
+		//glBindVertexArray(m_VertexArrayRef);
 
 	}
 
