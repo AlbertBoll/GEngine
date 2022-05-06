@@ -1,11 +1,21 @@
-#include<iostream>
-#include<GEngine/Core/BaseApp.h>
-#include<GEngine/Core/WindowManager.h>
+#include <iostream>
+#include <GEngine/Core/BaseApp.h>
 
+
+
+struct WindowParams
+{
+	int width, height;
+};
+
+//using namespace GEngine;
 
 
 int main(int argc, char* args[])
 {
+	
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	
 
 
 	GEngine::BaseApp app;
