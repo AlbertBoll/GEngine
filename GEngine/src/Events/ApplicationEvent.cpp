@@ -3,7 +3,8 @@
 #include "Core/BaseApp.h"
 
 
-namespace GEngine{
+namespace GEngine::Event
+{
 
 	void ApplicationEvent::OnWindowClose(SDL_WindowEvent& e)
 	{
@@ -36,7 +37,7 @@ namespace GEngine{
 		if (auto p = windowsManager->GetWindows().find(e.windowID); p != windowsManager->GetWindows().end())
 		{
 			p->second->OnResize(new_width, new_height);
-			GENGINE_CORE_INFO("Window with title {} has been resized to ({}, {})", p->second->GetTitle(), new_width, new_height);
+			//GENGINE_CORE_INFO("Window with title {} has been resized to ({}, {})", p->second->GetTitle(), new_width, new_height);
 		}
 
 	}

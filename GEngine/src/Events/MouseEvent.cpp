@@ -2,7 +2,7 @@
 #include "Events/MouseEvent.h"
 #include "Core/BaseApp.h"
 
-namespace GEngine
+namespace GEngine::Event
 {
 
 
@@ -74,9 +74,9 @@ namespace GEngine
 		auto* inputManager = engine.GetInputManager();
 		auto& inputState = inputManager->GetInputState();
 
-		inputState.m_Mouse.m_ScrollWheel = Vector2(
+		inputState.m_Mouse.SetScrollWheel(Math::Vector2::Vector2(
 			static_cast<float>(e.x),
-			static_cast<float>(e.y));
+			static_cast<float>(e.y)));
 	}
 
 }

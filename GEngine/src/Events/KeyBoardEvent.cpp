@@ -2,7 +2,7 @@
 #include "Events/KeyboardEvent.h"
 
 
-namespace GEngine
+namespace GEngine::Event
 {
 	void KeyboardEvent::OnKeyPress(SDL_KeyboardEvent& e)
 	{
