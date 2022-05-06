@@ -1,6 +1,7 @@
 #pragma once
 
 #include<functional>
+#include<algorithm>
 
 
 namespace GEngine
@@ -121,31 +122,32 @@ namespace GEngine
 
 		void RegisterEvent(IEvent* callBackList)
 		{
-			if (auto p = m_EventCallBackList.find(callBackList->GetName()); p == m_EventCallBackList.end())
-			{
-				m_EventCallBackList[callBackList->GetName()] = callBackList;
-			}
-
-			
+			m_EventCallBackList.emplace(callBackList->GetName(), callBackList);
 		}
 
 		template <typename R = void, typename ... Args>
-		void DispatchEvent(const std::string& eventName, Args&&...args)
+		R DispatchEvent(const std::string& eventName, Args&&...args)
 		{
-			if (auto p = m_EventCallBackList.find(eventName); p != m_EventCallBackList.end())
+			auto range = m_EventCallBackList.equal_range(eventName);
+
+			for (auto it = range.first; it != range.second; ++it)
 			{
-				if (Events<R(Args...)>* events = dynamic_cast<Events<R(Args...)>*>(p->second))
-				{
+				if (Events<R(Args...)>* events = dynamic_cast<Events<R(Args...)>*>(it->second))
 					events->Fire(std::forward<Args>(args)...);
-				}
 			}
+
+			/*using value_type = std::unordered_multimap<std::string, IEvent*>::value_type;
+			std::for_each(range.first, range.second, [](value_type& x)
+				{
+					if (Events<(Args...)>* events = dynamic_cast<Events<(Args...)>*>(x.second))
+						events->Fire(std::forward<Args>(args)...);
+				});*/
 
 		}
 
 
-
 	private:
-		std::unordered_map<std::string, IEvent*> m_EventCallBackList;
+		std::unordered_multimap<std::string, IEvent*> m_EventCallBackList;
 	};
 
 
