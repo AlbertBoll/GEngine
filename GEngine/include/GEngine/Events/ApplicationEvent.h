@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace GEngine
+namespace GEngine::Event
 {
 
 	class ApplicationEvent
