@@ -207,7 +207,7 @@ namespace GEngine
 	{
 		m_ScreenWidth = new_width;
 		m_ScreenHeight = new_height;
-
+		GENGINE_CORE_INFO("Window with title {} has been resized to ({}, {})", GetTitle(), new_width, new_height);
 	}
 
 
