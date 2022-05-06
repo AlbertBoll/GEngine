@@ -50,11 +50,35 @@ namespace GEngine
 		CameraBase(const CameraSetting& camera): m_CameraSetting{camera}{}
 		void SetCameraSetting(const CameraSetting& camera_setting) { m_CameraSetting = camera_setting; }
 		virtual void OnResize(int new_width, int new_height) = 0;
+		virtual void OnScroll(float new_zoom_level) = 0;
+
+		void OnUpdateView()
+		{
+			m_View = glm::inverse(GetWorldTransform());
+			RecalculateViewProjection();
+		}
+
+		void RecalculateViewProjection() { m_ViewProjection = m_Projection * m_View; }
+
+		Mat4 GetViewProjection() const
+		{
+			return m_ViewProjection;
+		}
+
+		Mat4 GetView() const { return m_View; }
+
+		Mat4 GetProjection() const { return m_Projection; }
+
+		float GetZoomLevel() const { return m_CameraSetting.m_PerspectiveSetting.m_ZoomLevel; }
+
+	private:
+		
 
 	protected:
 		CameraSetting m_CameraSetting;
 		Mat4 m_Projection{ 1.0f };
 		Mat4 m_View{ 1.0f };
+		Mat4 m_ViewProjection{ 1.0f };
 	};
 }
 
