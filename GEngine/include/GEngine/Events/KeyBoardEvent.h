@@ -1,6 +1,6 @@
 #pragma once
 
-namespace GEngine
+namespace GEngine::Event
 {
 
 
