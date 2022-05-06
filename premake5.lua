@@ -69,6 +69,10 @@ project "GEngine"
 		"configurations:*"
 	}
 
+
+	buildoptions "/MTd"
+
+
 	systemversion "lastest"
 
 	defines
@@ -167,6 +171,8 @@ project "GEngineEditor"
 		"system:windows",
 		"configurations:*"
 	}
+
+	buildoptions "/MTd"
 
 	systemversion "10.0"
 
