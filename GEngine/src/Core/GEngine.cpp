@@ -1,29 +1,13 @@
 #include "gepch.h"
 #include "Core/GEngine.h"
-#include <Events/EventManager.h>
-//#include "Inputs/InputManager.h"
-//#include "core/WindowManager.h"
+
+
 
 namespace GEngine
 {
 
 	SDL_DisplayMode mode;
 
-
-	GEngine::~GEngine()
-	{
-
-		//since using scoped pointer, there is no need to release resource in destructor
-		/*if (m_WindowManager)
-		{
-			delete m_WindowManager;
-			m_WindowManager = nullptr;
-		}*/
-
-		//delete m_InputManager;
-		//delete m_WindowManager;
-	
-	}
 
 	GEngine& GEngine::Get()
 	{
@@ -85,14 +69,20 @@ namespace GEngine
 			SDL_GetDesktopDisplayMode(0, &mode);
 			GENGINE_CORE_INFO("Display width: {}. Display height: {}. Refresh Rate: {}", mode.w, mode.h, mode.refresh_rate);
 
-			GENGINE_CORE_INFO("Initialize WindowManager");
+			GENGINE_CORE_INFO("Initialize Window Manager");
 			
-			m_WindowManager = WindowManager::GetScopedInstance();
+			m_WindowManager = Manager::WindowManager::GetScopedInstance();
 
-			GENGINE_CORE_INFO("Initialize InputManager");
+
+			GENGINE_CORE_INFO("Initialize Input Manager");
 			
-			m_InputManager = Input::InputManager::GetScopedInstance();
+			m_InputManager = Manager::InputManager::GetScopedInstance();
 			m_InputManager->Initialize();
+
+			GENGINE_CORE_INFO("Initialize Event Manager");
+
+			m_EventManager = Manager::EventManager::GetScopedInstance();
+			m_EventManager->Initialize();
 
 			m_IsInitialize = true;
 			
@@ -107,11 +97,9 @@ namespace GEngine
 
 		while (m_Running) {
 
-	
-			m_InputManager->ProcessEvent(event);
-			
+			m_EventManager->OnEvent(event);
 
-			for (auto& p : m_WindowManager->m_Windows)
+			for (auto& p : m_WindowManager->GetWindows())
 			{
 
 				p.second->BeginRender();
