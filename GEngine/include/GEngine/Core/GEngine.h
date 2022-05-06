@@ -3,7 +3,7 @@
 #include "Utility.h"
 #include "Managers/InputManager.h"
 #include "Managers/WindowManager.h"
-#include <Managers/EventManager.h>
+#include "Managers/EventManager.h"
 
 
 
@@ -11,12 +11,15 @@
 namespace GEngine
 {
 
+		  
 	class GEngine
 	{
 
 	public:
+
+		//Mark GEngine is not copyable and not movable
 		NONCOPYMOVABLE(GEngine);
-		~GEngine();
+		~GEngine() = default;
 		static GEngine& Get();
 		void Initialize();
 		Manager::WindowManager* GetWindowManager() { return m_WindowManager.get(); }
