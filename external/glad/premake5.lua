@@ -22,7 +22,7 @@ project "glad"
 	{
 		"system:windows"
 	}
-
+	buildoptions "/MTd"
 	systemversion "10.0"
 
 
