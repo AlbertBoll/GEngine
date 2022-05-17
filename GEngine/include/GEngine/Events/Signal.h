@@ -4,7 +4,7 @@
 
 namespace GEngine
 {
-#define ConnectTo(sender, signal, receiver, className ,slot) (sender).signal.Connect<className, slot>(receiver)
+
 
     template <typename Signature>
     class Delegate;
@@ -311,11 +311,45 @@ namespace GEngine
     class Signal<Ret(Args...)>
     {
     public:
+
+
+
         template <Ret(*FreeFunction)(Args...)>
         auto& Connect();
 
         template <typename Type, Ret(Type::* PtrToMemFun)(Args...)>
         auto& Connect(Type& instance);
+   
+
+
+        // template specialization which do nothing
+        template <typename Type>
+        void Connect(Type& instance)
+        {
+
+        }
+
+        // variadic template pointers to non const member functions
+        template <typename Type, Ret(Type::* PtrToMemFun)(Args...), Ret(Type::* PtrToMemFun_)(Args...), Ret(Type::* ... PtrToMemFun__)(Args...)>
+        void Connect(Type& instance)
+        {
+
+            Connect<Type, PtrToMemFun>(instance);
+            Connect<Type, PtrToMemFun_>(instance);
+            Connect<Type, PtrToMemFun__...>(instance);
+        }
+
+
+
+        // variadic template pointers to const member functions
+        template <typename Type, Ret(Type::* PtrToConstMemFun)(Args...) const, Ret(Type::* PtrToConstMemFun_)(Args...) const, Ret(Type::* ... PtrToConstMemFun__)(Args...) const>
+        void Connect(Type& instance)
+        {
+            Connect<Type, PtrToConstMemFun>(instance);
+            Connect<Type, PtrToConstMemFun_>(instance);
+            Connect<Type, PtrToConstMemFun__...>(instance);
+        }
+
 
         template <typename Type, Ret(Type::* PtrToConstMemFun)(Args...) const>
         auto& Connect(Type& instance);
@@ -323,13 +357,30 @@ namespace GEngine
         template <typename Type>
         auto& Connect(Type&& funObj);
 
+        template <typename Type, Ret(Type::* PtrToMemFun)(Args...)>
+        void Connect(const std::vector<Type>& types)
+        {
+            for (auto& p : types)
+            {
+                Connect<Type, PtrToMemFun>(const_cast<Type&>(p));
+            }
+        }
+
+        template <typename Type, Ret(Type::* PtrToMemFun)(Args...) const>
+        void Connect(const std::vector<Type>& types)
+        {
+            for (auto& p : types)
+            {
+                Connect<Type, PtrToMemFun>(const_cast<Type&>(p));
+            }
+        }
+
    
         void Disconnect(const Delegate<Ret(Args...)>& delegate)
         {
             mDelegates.erase(std::remove_if(mDelegates.begin(), mDelegates.end(), [&](const Delegate<Ret(Args...)>& d)
 
                 {
-
                     return delegate.GetID() == d.GetID();
 
                 }), mDelegates.end());
@@ -339,6 +390,7 @@ namespace GEngine
         explicit operator bool() const { return !mDelegates.empty(); }
 
         void operator()(Args... args) { for (auto& delegate : mDelegates) delegate(std::forward<Args>(args)...); }
+
         void Fire(Args... args) { for (auto& delegate : mDelegates) delegate.Invoke(std::forward<Args>(args)...); }
 
     private:
@@ -386,6 +438,10 @@ namespace GEngine
         return mDelegates.back();
     }
 
+
+   // #define Connect(sender, signal, receiver, className ,slot) (sender).signal.Connect<className, slot>(receiver)
+
+    #define Connect(sender, signal, receiver, className,...) (sender).signal.Connect<className, __VA_ARGS__>(receiver)
 
 # if 0
 	/*template<typename>class SlotBase;
