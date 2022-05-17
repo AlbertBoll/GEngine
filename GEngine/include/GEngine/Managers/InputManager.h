@@ -38,11 +38,8 @@ namespace GEngine::Manager
 	{
 	public:
 		ButtonState GetKeyState(GEngineKeyCode keyCode)const;
-		bool IsKeyHeld(GEngineKeyCode keyCode)const 
-		{ 
-			return GetKeyState(keyCode) == ButtonState::Held;
-		};
-
+	
+		bool IsKeyHeld(GEngineKeyCode keyCode)const { return GetKeyState(keyCode) == ButtonState::Held; };
 		bool IsKeyPressed(GEngineKeyCode keyCode)const { return GetKeyState(keyCode) == ButtonState::Pressed; };
 		bool IsKeyReleased(GEngineKeyCode keyCode)const { return GetKeyState(keyCode) == ButtonState::Released; };
 
@@ -148,6 +145,12 @@ namespace GEngine::Manager
 
 		const InputState& GetInputState() const { return m_InputState; }
 		InputState& GetInputState(){ return m_InputState; }
+		KeyboardState& GetKeyboardState() { return m_InputState.m_Keyboard; }
+		MouseState& GetMouseState() { return m_InputState.m_Mouse; }
+		ControllerState& GetControllerState() { return m_InputState.m_Controller; }
+
+
+
 
 		void SetRelativeMouseMode(bool value);
 

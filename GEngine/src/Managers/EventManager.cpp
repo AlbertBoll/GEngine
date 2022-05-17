@@ -83,14 +83,14 @@ namespace GEngine::Manager
 			{
 				auto& engine = BaseApp::GetEngine();
 				auto* inputManager = engine.GetInputManager();
-				auto& inputState = inputManager->GetInputState();
+				auto& MouseState = inputManager->GetMouseState();
 
 				if (auto p = engine.GetWindowManager()->GetWindows().find(scrollWheelParam.ID); p != engine.GetWindowManager()->GetWindows().end())
 				{
 					GENGINE_CORE_INFO("Mouse scroll wheel at the {}. x: {}   y: {}", p->second->GetTitle(), scrollWheelParam.X, scrollWheelParam.Y);
 				}
 
-				inputState.m_Mouse.SetScrollWheel(Vector2(
+				MouseState.SetScrollWheel(Vector2(
 					static_cast<float>(scrollWheelParam.X),
 					static_cast<float>(scrollWheelParam.Y)));
 			});
