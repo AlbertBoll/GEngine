@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Graphics/Texture.h"
 
 #define Setter(member) void SetProperty(const decltype(member)& p){\
 std::cout << "Property changes to "<< p.m_Property<<std::endl;\
@@ -10,6 +10,9 @@ std::cout << "Property changes to "<< p.m_Property<<std::endl;\
 							return member;\
 }\
                     
+#define GetterAndSetter(member) Getter(member);\
+                                Setter(member);\
+							
 
 
 namespace GEngine
