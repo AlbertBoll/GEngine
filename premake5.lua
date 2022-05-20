@@ -17,6 +17,7 @@ externals = {}
 externals["sdl2"] = "external/sdl2"
 externals["spdlog"] = "external/spdlog"
 externals["glad"] = "external/glad"
+externals["tbb"] = "external/tbb"
 
 include "external/glad"
 
@@ -51,7 +52,8 @@ project "GEngine"
 		"%{prj.name}/include/external",
 		"%{externals.sdl2}/include",
 		"%{externals.spdlog}/include",
-		"%{externals.glad}/include"
+		"%{externals.glad}/include",
+		"%{externals.tbb}/include"
 		--"%{prj.name}/src"
 
 	}
@@ -157,9 +159,11 @@ project "GEngineEditor"
 	
 	sysincludedirs
 	{
+		"%{externals.tbb}/include",
 		"GEngine/include",
 		"GEngine/include/external",
 		"GEngine/include/GEngine"
+		--"%{externals.tbb}/include"
 		--"%{externals.glad}/include"
 		--"%{externals.spdlog}/include"
 
@@ -183,7 +187,8 @@ project "GEngineEditor"
 
 	libdirs
 	{
-		"%{externals.sdl2}/lib"
+		"%{externals.sdl2}/lib",
+		"%{externals.tbb}/lib"
 	}
 
 	links
@@ -191,7 +196,11 @@ project "GEngineEditor"
 		"SDL2",
 		"SDL2main",
 		"SDL2test",
-		"glad"
+		"glad",
+		"tbb12",
+		"tbb12_debug",
+		"tbb",
+		"tbb_debug"
 	}
 
 	-- Linux
