@@ -1,6 +1,7 @@
 #pragma once
-#include "tbb/tbb.h"
-
+#include "tbb/tbb/parallel_for.h"
+#include "tbb/tbb/blocked_range2d.h"
+#include "tbb/tbb/blocked_range3d.h"
 
 namespace GEngine
 {
@@ -9,61 +10,67 @@ namespace GEngine
 
     template <typename IndexType, typename Func>
     void ParallelFor(IndexType beginIndex, IndexType endIndex,
-        const Func& function,
-        ExecutionPolicy policy = ExecutionPolicy::Parallel);
+        const Func& function);
 
     template <typename IndexType, typename Func>
-    void ParallelFor(IndexType beginIndexX, IndexType endIndexX,
+    void ParallelRangeFor(
+        IndexType beginIndex, IndexType endIndex,
+        const Func& function);
+
+    template <typename IndexType, typename Func>
+    void ParallelFor(
+        IndexType beginIndexX, IndexType endIndexX,
         IndexType beginIndexY, IndexType endIndexY,
-        const Func& function,
-        ExecutionPolicy policy = ExecutionPolicy::Parallel);
+        const Func& function);
+
+    template <typename IndexType, typename Func>
+    void ParallelRangeFor(
+        IndexType beginIndexX, IndexType endIndexX,
+        IndexType beginIndexY, IndexType endIndexY,
+        const Func& function);
 
 
     template <typename IndexType, typename Func>
-    void ParallelFor(IndexType beginIndexX, IndexType endIndexX,
+    void ParallelFor(
+        IndexType beginIndexX, IndexType endIndexX,
         IndexType beginIndexY, IndexType endIndexY,
         IndexType beginIndexZ, IndexType endIndexZ,
-        const Func& function,
-        ExecutionPolicy policy = ExecutionPolicy::Parallel);
+        const Func& function);
+
+    template <typename IndexType, typename Func>
+    void ParallelRangeFor(
+        IndexType beginIndexX, IndexType endIndexX,
+        IndexType beginIndexY, IndexType endIndexY,
+        IndexType beginIndexZ, IndexType endIndexZ,
+        const Func& function);
 
   
 
     template<typename IndexType, typename Func>
-    void ParallelFor(IndexType beginIndex, IndexType endIndex, const Func& function, ExecutionPolicy policy)
+    void ParallelFor(IndexType beginIndex, IndexType endIndex, const Func& function)
     {
         if (beginIndex > endIndex) return;
         
-        if (policy == ExecutionPolicy::Parallel)
-        {
-            tbb::parallel_for(beginIndex, endIndex, function);
-        }
-
-        else
-        {
-            for (size_t i = beginIndex; i < endIndex; ++i) {
-                function(i);
-            }
-        }
+      
+        tbb::parallel_for(beginIndex, endIndex, function);            
 
     }
 
+ 
 
     template<typename IndexType, typename Func>
-    void ParallelFor(IndexType beginIndexX, IndexType endIndexX, IndexType beginIndexY, IndexType endIndexY, const Func& function, ExecutionPolicy policy)
+    void ParallelFor(IndexType beginIndexX, IndexType endIndexX, IndexType beginIndexY, IndexType endIndexY, const Func& function)
     {
         ParallelFor(beginIndexY, endIndexY,
             [&](IndexType j) {
                 for (IndexType i = beginIndexX; i < endIndexX; ++i) {
                     function(i, j);
                 }
-            },
-            policy);
+            });
     }
 
-
-
     template<typename IndexType, typename Func>
-    void ParallelFor(IndexType beginIndexX, IndexType endIndexX, IndexType beginIndexY, IndexType endIndexY, IndexType beginIndexZ, IndexType endIndexZ, const Func& function, ExecutionPolicy policy)
+    void ParallelFor(IndexType beginIndexX, IndexType endIndexX, IndexType beginIndexY, IndexType endIndexY, IndexType beginIndexZ, IndexType endIndexZ, const Func& function)
     {
         ParallelFor(beginIndexZ, endIndexZ,
             [&](IndexType k) {
@@ -72,7 +79,47 @@ namespace GEngine
                         function(i, j, k);
                     }
                 }
-            },
-            policy);
+            });
+    }
+
+
+    template<typename IndexType, typename Func>
+    void ParallelRangeFor(IndexType beginIndex, IndexType endIndex, const Func& function)
+    {
+        if (beginIndex > endIndex) return;
+
+        tbb::parallel_for(tbb::blocked_range<IndexType>(beginIndex, endIndex),
+            [&function](const tbb::blocked_range<IndexType>& range1d) {
+                function(range1d.begin(), range1d.end());
+            });
+
+    }
+
+
+    template<typename IndexType, typename Func>
+    void ParallelRangeFor(IndexType beginIndexX, IndexType endIndexX, IndexType beginIndexY, IndexType endIndexY, const Func& function)
+    {
+        if (beginIndexX > endIndexX || beginIndexY > endIndexY) return;
+        tbb::parallel_for(tbb::blocked_range2d<IndexType>(beginIndexX, endIndexX, beginIndexY, endIndexY),
+            [&function](const tbb::blocked_range2d<IndexType>& range2d)
+            {
+                function(range2d.cols().begin(), range2d.cols().end(), range2d.rows().begin(), range2d.rows().end());
+            });
+
+    }
+
+
+    template<typename IndexType, typename Func>
+    void ParallelRangeFor(IndexType beginIndexX, IndexType endIndexX, IndexType beginIndexY, IndexType endIndexY, IndexType beginIndexZ, IndexType endIndexZ, const Func& function)
+    {
+
+        if(beginIndexX > endIndexX || beginIndexY > endIndexY || beginIndexZ > endIndexZ) return;
+        tbb::parallel_for(tbb::blocked_range3d<IndexType>(beginIndexX, endIndexX, beginIndexY, endIndexY, beginIndexZ, endIndexZ),
+            [&function](const tbb::blocked_range3d<IndexType>& range3d)
+            {
+                function(range3d.cols().begin(),  range3d.cols().end(),
+                         range3d.rows().begin(),  range3d.rows().end(),
+                         range3d.pages().begin(), range3d.pages().end());
+            });
     }
 }
