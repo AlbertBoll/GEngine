@@ -1,7 +1,7 @@
 #pragma once
 #include"Array.h"
 #include"ArrayAccessor2D.h"
-#include<vector>
+
 
 namespace GEngine::GridBasedContainer
 {
@@ -136,7 +136,7 @@ namespace GEngine::GridBasedContainer
 		size_t Height() const { return m_Size.m_Height; }
 
 		//! Returns the raw pointer to the array data.
-		T* Data() { return m_Data; }
+		T* Data() { return m_Data.data(); }
 
 		//! Returns the const raw pointer to the array data.
 		const T* const Data() const { return m_Data; }
@@ -162,10 +162,10 @@ namespace GEngine::GridBasedContainer
 	
 
 		//! Returns the reference to the element at (i, j).
-		T& operator()(size_t i, size_t j) { return At(i, j); }
+		T& operator()(size_t i, size_t j) { return m_Data[i + j * m_Size.m_Width]; }
 
 		//! Returns the const reference to the element at (i, j).
-		const T& operator()(size_t i, size_t j) const { return At(i, j); }
+		const T& operator()(size_t i, size_t j) const { return m_Data[i + j * m_Size.m_Width]; }
 
 		//! Sets entire array with given \p value.
 		Array& operator=(const T& other)
@@ -250,6 +250,19 @@ namespace GEngine::GridBasedContainer
 		void ParallelForEachIndex(Callback func)
 		{
 			WriteAccessor().ParallelForEachIndex(func);
+		}
+
+
+		template <typename Callback>
+		void ParallelForIndexRange(Callback func)const
+		{
+			ReadAccessor().ParallelForIndexRange(func);
+		}
+
+		template <typename Callback>
+		void ParallelForIndexRange(Callback func)
+		{
+			WriteAccessor().ParallelForIndexRange(func);
 		}
 
 

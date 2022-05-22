@@ -1,6 +1,5 @@
 #pragma once
 #include"Array.h"
-#include <vector>
 #include"ArrayAccessor1D.h"
 
 
@@ -114,6 +113,18 @@ namespace GEngine::GridBasedContainer
 		template <typename Callback>
 		void ParallelForEachIndex(Callback func);
 
+		template <typename Callback>
+		void ParallelForIndexRange(Callback func)const
+		{
+			ReadAccessor().ParallelForIndexRange(func);
+		}
+
+		template <typename Callback>
+		void ParallelForIndexRange(Callback func)
+		{
+			WriteAccessor().ParallelForIndexRange(func);
+		}
+
 		//! Returns the reference to i-th element.
 		T& operator[](size_t i);
 
@@ -121,14 +132,14 @@ namespace GEngine::GridBasedContainer
 		const T& operator[](size_t i) const;
 
 		//! Casts to array accessor.
-		operator ArrayAccessor1D<T>();
+		operator WriteAccessor1D<T>();
 
 		//! Casts to const array accessor.
-		operator ConstArrayAccessor1D<T>() const;
+		operator ReadAccessor1D<T>() const;
 
-		ArrayAccessor1D<T> Accessor();
+		WriteAccessor1D<T> WriteAccessor();
 
-		ConstArrayAccessor1D<T> ConstAccessor() const;
+		ReadAccessor1D<T> ReadAccessor() const;
 
 	private:
 		ContainerType m_Data;
@@ -309,15 +320,12 @@ namespace GEngine::GridBasedContainer
 	template<typename T>
 	inline T& Array<T, 1>::operator[](size_t i)
 	{
-		ASSERT(i >= 0 && i < Size());
 		return m_Data[i];
 	}
 
 	template<typename T>
 	inline const T& Array<T, 1>::operator[](size_t i) const
 	{
-
-		ASSERT(i >= 0 && i < Size());
 		return m_Data[i];
 	}
 
@@ -325,28 +333,28 @@ namespace GEngine::GridBasedContainer
 
 
 	template<typename T>
-	inline ArrayAccessor1D<T> Array<T, 1>::Accessor()
+	inline WriteAccessor1D<T> Array<T, 1>::WriteAccessor()
 	{
-		return ArrayAccessor1D<T>(Size(), Data());
+		return WriteAccessor1D<T>(Size(), Data());
 	}
 
 	template<typename T>
-	inline ConstArrayAccessor1D<T> Array<T, 1>::ConstAccessor() const
+	inline ReadAccessor1D<T> Array<T, 1>::ReadAccessor() const
 	{
-		return ConstArrayAccessor1D<T>(Size(), Data());
+		return ReadAccessor1D<T>(Size(), Data());
 	}
 
 
 	template<typename T>
-	inline Array<T, 1>::operator ConstArrayAccessor1D<T>() const
+	inline Array<T, 1>::operator ReadAccessor1D<T>() const
 	{
-		return ConstAccessor();
+		return ReadAccessor();
 	}
 
 	template<typename T>
-	inline Array<T, 1>::operator ArrayAccessor1D<T>()
+	inline Array<T, 1>::operator WriteAccessor1D<T>()
 	{
-		return Accessor();
+		return WriteAccessor();
 	}
 
 
@@ -354,56 +362,56 @@ namespace GEngine::GridBasedContainer
 	template<typename Callback>
 	inline void Array<T, 1>::ForEach(Callback func) const
 	{
-		ConstAccessor().ForEach(func);
+		ReadAccessor().ForEach(func);
 	}
 
 	template<typename T>
 	template<typename Callback>
 	inline void Array<T, 1>::ForEach(Callback func)
 	{
-		Accessor().ForEach(func);
+		WriteAccessor().ForEach(func);
 	}
 
 	template<typename T>
 	template<typename Callback>
 	inline void Array<T, 1>::ForEachIndex(Callback func) const
 	{
-		ConstAccessor().ForEachIndex(func);
+		ReadAccessor().ForEachIndex(func);
 	}
 
 	template<typename T>
 	template<typename Callback>
 	inline void Array<T, 1>::ForEachIndex(Callback func)
 	{
-		Accessor().ForEachIndex(func);
+		WriteAccessor().ForEachIndex(func);
 	}
 
 	template<typename T>
 	template<typename Callback>
 	inline void Array<T, 1>::ParallelForEach(Callback func)
 	{
-		Accessor().ParallelForEach(func);
+		WriteAccessor().ParallelForEach(func);
 	}
 
 	template<typename T>
 	template<typename Callback>
 	inline void Array<T, 1>::ParallelForEach(Callback func)const
 	{
-		ConstAccessor().ParallelForEach(func);
+		ReadAccessor().ParallelForEach(func);
 	}
 
 	template<typename T>
 	template<typename Callback>
 	inline void Array<T, 1>::ParallelForEachIndex(Callback func) const
 	{
-		ConstAccessor().ParallelForEachIndex(func);
+		ReadAccessor().ParallelForEachIndex(func);
 	}
 
 	template<typename T>
 	template<typename Callback>
 	inline void Array<T, 1>::ParallelForEachIndex(Callback func)
 	{
-		Accessor().ParallelForEachIndex(func);
+		WriteAccessor().ParallelForEachIndex(func);
 	}
 
 

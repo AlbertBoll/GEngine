@@ -1,34 +1,39 @@
 #pragma once
+#include <vector>
+#include <cstdint>
 
 namespace GEngine::GridBasedContainer
 {
+	struct Dim2d
+	{
+		size_t m_Width{};
+		size_t m_Height{};
+	};
 
-	template<typename T, uint8_t N>
+	struct Dim3d
+	{
+		size_t m_Width{};
+		size_t m_Height{};
+		size_t m_Depth{};
+	};
+
+	template<typename T, uint8_t N> requires(N >= 1 && N <= 3)
 	class Array final  //mark Array as final which can not be inherited
 	{
 	public:
-		Array()
-		{
-			ASSERT(N >= 1 && N <= 3, "N should be either 1, 2 or 3.");
-		}
+	
 	};
 
-	template <typename T, uint8_t N>
+	template <typename T, uint8_t N> requires(N >= 1 && N <= 3)
 	class ArrayAccessor final {
 	public:
-		ArrayAccessor()
-		{
-			ASSERT(N >= 1 && N <= 3, "N should be either 1, 2 or 3.");
-		}
+	
 	};
 
-	template <typename T, uint8_t N>
+	template <typename T, uint8_t N> requires(N >= 1 && N <= 3)
 	class ConstArrayAccessor final {
 	public:
-		ConstArrayAccessor()
-		{
-			ASSERT(N >= 1 && N <= 3, "N should be either 1, 2 or 3.");
-		}
+	
 	};
 
 
