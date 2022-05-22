@@ -1,5 +1,5 @@
 #pragma once
-#include "Graphics/Texture.h"
+#include "Events/Signal.h"
 
 #define Setter(member) void SetProperty(const decltype(member)& p){\
 std::cout << "Property changes to "<< p.m_Property<<std::endl;\

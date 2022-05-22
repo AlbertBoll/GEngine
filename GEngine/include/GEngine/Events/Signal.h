@@ -1,5 +1,5 @@
 #pragma once
-#include<functional>
+#include<vector>
 #include<algorithm>
 
 namespace GEngine
@@ -441,7 +441,7 @@ namespace GEngine
 
    // #define Connect(sender, signal, receiver, className ,slot) (sender).signal.Connect<className, slot>(receiver)
 
-    #define Connect(sender, signal, receiver, className,...) (sender).signal.Connect<className, __VA_ARGS__>(receiver)
+    #define Connection(sender, signal, receiver, className,...) (sender).signal.Connect<className, __VA_ARGS__>(receiver)
 
 # if 0
 	/*template<typename>class SlotBase;

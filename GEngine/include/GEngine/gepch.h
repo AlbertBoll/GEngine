@@ -32,6 +32,14 @@
 #include <limits>
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
+#include <mutex>       // std::mutex, std::scoped_lock
+#include <queue>       // std::queue
+#include <thread>      // std::this_thread, std::thread
+#include <type_traits> // std::common_type_t, std::decay_t, std::enable_if_t, std::is_void_v, std::invoke_result_t
+#include <utility>     // std::move
+#include <future>  
+#include <atomic> 
+
 //#include "Math/Math.h"
 
 #ifdef GENGINE_PLATFORM_WINDOWS
