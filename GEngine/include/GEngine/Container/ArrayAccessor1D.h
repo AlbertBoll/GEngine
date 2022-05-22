@@ -71,6 +71,9 @@ namespace GEngine::GridBasedContainer
         template <typename Callback>
         void ParallelForEachIndex(Callback func);
 
+        template <typename Callback>
+        void ParallelForIndexRange(Callback func);
+
        //template <typename Callback>
        //void ForEach(Callback func) const;
 
@@ -97,7 +100,7 @@ namespace GEngine::GridBasedContainer
 
 
     template <typename T> 
-    using ArrayAccessor1D = ArrayAccessor<T, 1>;
+    using WriteAccessor1D = ArrayAccessor<T, 1>;
 
 
     template <typename T>
@@ -177,7 +180,7 @@ namespace GEngine::GridBasedContainer
         void ForEach(Callback func) const
         {
             for (size_t i = 0; i < m_Size; ++i) {
-                func(At(i));
+                func((*this)[i]);
             }
         }
 
@@ -225,7 +228,16 @@ namespace GEngine::GridBasedContainer
         template <typename Callback>
         void ParallelForEach(Callback func) const
         {
-            ParallelFor((size_t)0, m_Size, func);
+            ParallelFor((std::size_t)0, m_Size, [&](size_t i) {
+                func((*this)[i]);
+                }
+            );
+        }
+
+        template <typename Callback>
+        void ParallelForIndexRange(Callback func)const
+        {
+            ParallelRangeFor((size_t)0, m_Size, func);
         }
 
         //! Returns the const reference to i-th element.
@@ -242,7 +254,7 @@ namespace GEngine::GridBasedContainer
 
     //! Type alias for 1-D const array accessor.
     template <typename T> 
-    using ConstArrayAccessor1D = ConstArrayAccessor<T, 1>;
+    using ReadAccessor1D = ConstArrayAccessor<T, 1>;
 
 
 
@@ -365,7 +377,7 @@ namespace GEngine::GridBasedContainer
     inline void ArrayAccessor<T, 1>::ForEach(Callback func)
     {
         for (size_t i = 0; i < m_Size; ++i) {
-            func(At(i));
+            func((*this)[i]);
         }
     }
 
@@ -384,7 +396,7 @@ namespace GEngine::GridBasedContainer
     inline void ArrayAccessor<T, 1>::ParallelForEach(Callback func)
     {
         ParallelFor((std::size_t)0, m_Size, [&](size_t i) {
-            func(At(i));
+            func((*this)[i]);
             }
         );
     }
@@ -395,6 +407,13 @@ namespace GEngine::GridBasedContainer
     inline void ArrayAccessor<T, 1>::ParallelForEachIndex(Callback func)
     {
         ParallelFor((size_t)0, m_Size, func);
+    }
+
+    template<typename T>
+    template<typename Callback>
+    inline void ArrayAccessor<T, 1>::ParallelForIndexRange(Callback func)
+    {
+        ParallelRangeFor((size_t)0, m_Size, func);
     }
 
 #if 0

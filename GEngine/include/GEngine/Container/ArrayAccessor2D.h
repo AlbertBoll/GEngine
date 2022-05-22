@@ -130,7 +130,7 @@ namespace GEngine::GridBasedContainer
 		{
 			ParallelFor((size_t)0, m_Size.m_Width,
 				(size_t)0, m_Size.m_Height,
-				[&](size_t i, size_t j) {func((*this)(i, j)});
+				[&](size_t i, size_t j) {func((*this)(i, j)); });
 		}
 
 		template <typename Callback>
@@ -138,6 +138,12 @@ namespace GEngine::GridBasedContainer
 		{
 			ParallelFor((size_t)0, m_Size.m_Width,
 				(size_t)0, m_Size.m_Height, func);
+		}
+
+		template <typename Callback>
+		void ParallelForIndexRange(Callback func)
+		{
+			ParallelRangeFor((size_t)0, m_Size.m_Width, (size_t)0, m_Size.m_Height, func);
 		}
 
 
@@ -255,9 +261,9 @@ namespace GEngine::GridBasedContainer
 		template <typename Callback>
 		void ForEach(Callback func) const
 		{
-			for (size_t j = 0; j < m_Size.m_Height; j++)
+			for (size_t j = 0; j < m_Size.m_Height; ++j)
 			{
-				for (size_t i = 0; i < m_Size.m_Width; i++)
+				for (size_t i = 0; i < m_Size.m_Width; ++i)
 				{
 					func((*this)(i, j));
 				}
@@ -267,9 +273,9 @@ namespace GEngine::GridBasedContainer
 		template <typename Callback>
 		void ForEachIndex(Callback func) const
 		{
-			for (size_t j = 0; j < m_Size.m_Height; j++)
+			for (size_t j = 0; j < m_Size.m_Height; ++j)
 			{
-				for (size_t i = 0; i < m_Size.m_Width; i++)
+				for (size_t i = 0; i < m_Size.m_Width; ++i)
 				{
 					func(i, j);
 				}
@@ -281,13 +287,19 @@ namespace GEngine::GridBasedContainer
 		{
 			ParallelFor((size_t)0, m_Size.m_Width, 
 						(size_t)0, m_Size.m_Height, 
-				[&](size_t i, size_t j) {func((*this)(i, j)});
+				[&](size_t i, size_t j) {func((*this)(i, j)); });
 		}
 
 		template <typename Callback>
 		void ParallelForEachIndex(Callback func) const
 		{
 			ParallelFor((size_t)0, m_Size.m_Width, (size_t)0, m_Size.m_Height, func);
+		}
+
+		template <typename Callback>
+		void ParallelForIndexRange(Callback func) const
+		{
+			ParallelRangeFor((size_t)0, m_Size.m_Width, (size_t)0, m_Size.m_Height, func);
 		}
 
 		size_t Index(size_t i, size_t j) const
