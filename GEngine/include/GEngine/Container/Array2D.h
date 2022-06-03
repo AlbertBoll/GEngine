@@ -266,6 +266,18 @@ namespace GEngine::GridBasedContainer
 		}
 
 
+		template <typename Callback, typename Partitioner = tbb::auto_partitioner>
+		void ParallelForIndexRange(const RangeParams<size_t>& xRange, const RangeParams<size_t>& yRange, Callback func, const Partitioner& partitioner = tbb::auto_partitioner{})const
+		{
+			ReadAccessor().ParallelForIndexRange(xRange, yRange, func, partitioner);
+		}
+
+		template <typename Callback, typename Partitioner = tbb::auto_partitioner>
+		void ParallelForIndexRange(const RangeParams<size_t>& xRange, const RangeParams<size_t>& yRange, Callback func, const Partitioner& partitioner = tbb::auto_partitioner{})
+		{
+			WriteAccessor().ParallelForIndexRange(xRange, yRange, func, partitioner);
+		}
+
 		WriteAccessor2D<T> WriteAccessor()
 		{
 			return WriteAccessor2D<T>(Size(), Data());

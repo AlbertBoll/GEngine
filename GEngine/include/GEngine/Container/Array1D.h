@@ -44,6 +44,8 @@ namespace GEngine::GridBasedContainer
 		//! Copies given array \p other to this array.
 		void Set(const Array& other);
 
+		void Reserve(size_t size);
+
 		//! Copies given initializer list \p lst to this array.
 		void Set(const std::initializer_list<T>& lst);
 
@@ -123,6 +125,24 @@ namespace GEngine::GridBasedContainer
 		void ParallelForIndexRange(Callback func)
 		{
 			WriteAccessor().ParallelForIndexRange(func);
+		}
+
+		template <typename Callback, typename Partitioner = tbb::auto_partitioner>
+		void ParallelForIndexRange(const RangeParams<size_t>& range, Callback func, const Partitioner& partitioner)const
+		{
+			ReadAccessor().ParallelForIndexRange(range, func, Partitioner);
+		}
+
+		template <typename Callback, typename Partitioner = tbb::auto_partitioner>
+		void ParallelForIndexRange(const RangeParams<size_t>& range, Callback func, const Partitioner& partitioner)
+		{
+			WriteAccessor().ParallelForIndexRange(range, func, Partitioner);
+		}
+
+		template<typename RealBodyFunc, typename ReductionFunc, typename Partitioner = tbb::auto_partitioner>
+		T ParallelReduce(const RangeParams<size_t>& range, T initVal, const RealBodyFunc& realBody, const ReductionFunc& reduction, const Partitioner& partitioner = tbb::auto_partitioner{})const
+		{
+			return ReadAccessor().ParallelReduce_(range, initVal, realBody, reduction, partitioner);
 		}
 
 		//! Returns the reference to i-th element.
@@ -234,6 +254,12 @@ namespace GEngine::GridBasedContainer
 	inline void Array<T, 1>::Clear()
 	{
 		m_Data.clear();
+	}
+
+	template<typename T>
+	inline void Array<T, 1>::Reserve(size_t size)
+	{
+		m_Data.reserve(size);
 	}
 
 	template<typename T>
