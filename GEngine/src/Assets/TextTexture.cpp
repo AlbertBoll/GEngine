@@ -7,9 +7,10 @@ namespace GEngine::Asset
 {
 	using namespace Manager;
 
-	TextTexture::TextTexture(const std::string& text, int pointSize, 
-		const Vec3f& color, const std::string& fileName): Texture()
-	
+	TextTexture::TextTexture(const std::string& text, 
+		const std::string& fileName, 
+		int pointSize, 
+		const Vec3f& color): Texture()
 	{
 		auto m_Font = AssetsManager::GetFont(fileName);
 		// Convert to SDL_Color
@@ -33,7 +34,6 @@ namespace GEngine::Asset
 		// Convert from surface to texture
 		CreateFromSurface(surf);
 		SDL_FreeSurface(surf);
-
 
 	}
 }
