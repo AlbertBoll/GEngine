@@ -18,6 +18,8 @@ externals["sdl2"] = "external/sdl2"
 externals["spdlog"] = "external/spdlog"
 externals["glad"] = "external/glad"
 externals["tbb"] = "external/tbb"
+externals["rttr"] = "external/rttr"
+externals["reflection"] = "external/reflection"
 
 include "external/glad"
 
@@ -53,7 +55,9 @@ project "GEngine"
 		"%{externals.sdl2}/include",
 		"%{externals.spdlog}/include",
 		"%{externals.glad}/include",
-		"%{externals.tbb}/include"
+		"%{externals.tbb}/include",
+		"%{externals.rttr}/include",
+		"%{externals.reflection}/include"
 		--"%{prj.name}/src"
 
 	}
@@ -159,10 +163,13 @@ project "GEngineEditor"
 	
 	sysincludedirs
 	{
+		
+		"%{externals.rttr}/include",
 		"%{externals.tbb}/include",
 		"GEngine/include",
 		"GEngine/include/external",
-		"GEngine/include/GEngine"
+		"GEngine/include/GEngine",
+		"%{externals.reflection}/include"
 		--"%{externals.tbb}/include"
 		--"%{externals.glad}/include"
 		--"%{externals.spdlog}/include"
@@ -188,7 +195,8 @@ project "GEngineEditor"
 	libdirs
 	{
 		"%{externals.sdl2}/lib",
-		"%{externals.tbb}/lib"
+		"%{externals.tbb}/lib",
+		"%{externals.rttr}/lib"
 	}
 
 	links
@@ -201,6 +209,7 @@ project "GEngineEditor"
 		"tbb12_debug",
 		"tbb",
 		"tbb_debug"
+
 	}
 
 	-- Linux
