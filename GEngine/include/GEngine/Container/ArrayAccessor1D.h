@@ -74,6 +74,12 @@ namespace GEngine::GridBasedContainer
         template <typename Callback>
         void ParallelForIndexRange(Callback func);
 
+        template <typename Callback, typename Partitioner = tbb::auto_partitioner>
+        void ParallelForIndexRange(const RangeParams<size_t>& range, Callback func, const Partitioner& partitioner = tbb::auto_partitioner{});
+
+       
+
+
        //template <typename Callback>
        //void ForEach(Callback func) const;
 
@@ -240,6 +246,12 @@ namespace GEngine::GridBasedContainer
             ParallelRangeFor((size_t)0, m_Size, func);
         }
 
+        template <typename Callback, typename Partitioner = tbb::auto_partitioner>
+        void ParallelForIndexRange(const RangeParams<size_t>& range, Callback func, const Partitioner& partitioner = tbb::auto_partitioner{}) const;
+
+        template <typename RealBodyFunc, typename ReductionFunc, typename Partitioner = tbb::auto_partitioner>
+        T ParallelReduce_(const RangeParams<size_t>& range, T initVal, const RealBodyFunc& realBody, const ReductionFunc& reduction, const Partitioner& partitioner = tbb::auto_partitioner{})const;
+
         //! Returns the const reference to i-th element.
         const T& operator[](size_t i) const
         {
@@ -395,7 +407,7 @@ namespace GEngine::GridBasedContainer
     template<typename Callback>
     inline void ArrayAccessor<T, 1>::ParallelForEach(Callback func)
     {
-        ParallelFor((std::size_t)0, m_Size, [&](size_t i) {
+        ParallelFor((size_t)0, m_Size, [&](size_t i) {
             func((*this)[i]);
             }
         );
@@ -454,5 +466,28 @@ namespace GEngine::GridBasedContainer
   */
 
 #endif
+
+    template<typename T>
+    template<typename Callback, typename Partitioner>
+    inline void ArrayAccessor<T, 1>::ParallelForIndexRange(const RangeParams<size_t>& range, Callback func, const Partitioner& partitioner)
+    {
+        ParallelRangeFor(range, func, partitioner);
+    }
+
+
+
+    template<typename T>
+    template<typename Callback, typename Partitioner>
+    inline void ConstArrayAccessor<T, 1>::ParallelForIndexRange(const RangeParams<size_t>& range, Callback func, const Partitioner& partitioner) const
+    {
+        ParallelRangeFor(range, func, partitioner);
+    }
+
+    template<typename T>
+    template<typename RealBodyFunc, typename ReductionFunc, typename Partitioner>
+    inline T ConstArrayAccessor<T, 1>::ParallelReduce_(const RangeParams<size_t>& range, T initVal, const RealBodyFunc& realBody, const ReductionFunc& reduction, const Partitioner& partitioner) const
+    {
+        return ParallelReduce(range, initVal, realBody, reduction, partitioner);
+    }
 
 }

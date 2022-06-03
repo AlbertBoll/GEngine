@@ -187,6 +187,12 @@ namespace GEngine::GridBasedContainer
             ParallelRangeFor((size_t)0, m_Size.m_Width, (size_t)0, m_Size.m_Height, (size_t)0, m_Size.m_Depth, func);
         }
 
+        template <typename Callback, typename Partitioner = tbb::auto_partitioner>
+        void ParallelForIndexRange(const RangeParams<size_t>& xRange, const RangeParams<size_t>& yRange, const RangeParams<size_t>& zRange, Callback func, const Partitioner& partitioner = tbb::auto_partitioner{})
+        {
+            ParallelRangeFor(xRange, yRange, zRange, func, partitioner);
+        }
+
 
         //! Returns the linear index of the given =3-D coordinate (i, j, k).
         size_t Index(size_t i, size_t j, size_t k) const
@@ -405,6 +411,12 @@ namespace GEngine::GridBasedContainer
             ParallelRangeFor((size_t)0, m_Size.m_Width, (size_t)0, m_Size.m_Height, (size_t)0, m_Size.m_Depth, func);
         }
 
+
+        template <typename Callback, typename Partitioner = tbb::auto_partitioner>
+        void ParallelForIndexRange(const RangeParams<size_t>& xRange, const RangeParams<size_t>& yRange, const RangeParams<size_t>& zRange, Callback func, const Partitioner& partitioner = tbb::auto_partitioner{})const
+        {
+            ParallelRangeFor(xRange, yRange, zRange, func, partitioner);
+        }
 
         //! Returns the linear index of the given =3-D coordinate (i, j, k).
         size_t Index(size_t i, size_t j, size_t k) const
