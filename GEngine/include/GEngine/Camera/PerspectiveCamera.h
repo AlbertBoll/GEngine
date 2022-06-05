@@ -15,7 +15,7 @@ namespace GEngine::Camera
 			
 			SetPerspective(field_of_view, aspect_ratio, near_field, far_field);
 			m_CameraSetting.m_PerspectiveSetting.m_ZoomLevel = zoom_level;
-			RecalculateViewProjection();
+			//RecalculateViewProjection();
 			
 		}
 

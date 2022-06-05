@@ -9,6 +9,7 @@ namespace GEngine
 {
 
 	using namespace Component;
+	class CameraBase;
 
 	class Actor
 	{
@@ -36,9 +37,9 @@ namespace GEngine
 
 		void PrintTransform();
 
-		virtual void Update(Timestep ts){};
+		virtual void Update(Timestep ts){}
 
-		
+		virtual void Render(CameraBase* camera){}
 
 
 		//Add smarter child pointer
