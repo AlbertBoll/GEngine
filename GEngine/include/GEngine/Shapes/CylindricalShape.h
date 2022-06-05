@@ -1,5 +1,5 @@
 #pragma once
-#include"ParametricShape.h"
+#include"ParametricSurface.h"
 #include"Polygon.h"
 #include"Math/Matrix.h"
 
@@ -7,12 +7,12 @@ namespace GEngine::Shape
 {
 
 
-	class CylindricalShape : public ParametricShape
+	class CylindricalShape : public ParametricSurface
 	{
 		
 	public:
 		CylindricalShape(float radiusTop = 1.f, float radiusBottom = 1.f, float height = 1.f, int radialSegments = 32, int heightSegments = 4, bool bTopClosed = false, bool bBottomClosed = false):
-			ParametricShape(0.f, TwoPi, radialSegments, 0.f, 1.f, heightSegments,
+			ParametricSurface(0.f, TwoPi, radialSegments, 0.f, 1.f, heightSegments,
 				[&](float u, float v)
 				{
 					return Vec3f((v * radiusTop + (1 - v) * radiusBottom) * glm::sin(u),
