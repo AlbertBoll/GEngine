@@ -41,6 +41,10 @@ namespace GEngine::Manager
 				return true;
 			}
 
+			operator std::vector<std::string>() {
+				return keys_filepath;
+			}
+
 		};
 
 		struct FileHash
@@ -52,8 +56,8 @@ namespace GEngine::Manager
 				size_t seed = 0;
 				for (auto& ele : c.keys_filepath)
 				{
-					//seed ^= std::hash<std::string>{}(ele) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-					seed ^= std::hash<std::string>{}(ele);
+					seed ^= std::hash<std::string>{}(ele) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+					//seed += std::hash<std::string>{}(ele);
 				}
 
 				return seed;
