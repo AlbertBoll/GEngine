@@ -496,9 +496,9 @@ namespace GEngine::Asset
 	using namespace Math;
 
 	SET_UNIFORM_IMPL(glUniform1iv, int, int);
-	SET_UNIFORM_IMPL(glUniform2iv, iVec2, int);
-	SET_UNIFORM_IMPL(glUniform3iv, iVec3, int);
-	SET_UNIFORM_IMPL(glUniform4iv, iVec4, int);
+	SET_UNIFORM_IMPL(glUniform2iv, Vec2i, int);
+	SET_UNIFORM_IMPL(glUniform3iv, Vec3i, int);
+	SET_UNIFORM_IMPL(glUniform4iv, Vec4i, int);
 	SET_UNIFORM_IMPL(glUniform1fv, float, float);
 	SET_UNIFORM_IMPL(glUniform2fv, Vec2f, float);
 	SET_UNIFORM_IMPL(glUniform3fv, Vec3f, float);
