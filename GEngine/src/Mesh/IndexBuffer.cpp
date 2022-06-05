@@ -4,32 +4,49 @@
 namespace GEngine::Buffer
 {
 
-	IndexBuffer::IndexBuffer()
-	{
-		glGenBuffers(1, &m_IndexBufferRef);
-		ASSERT(m_IndexBufferRef != 0);
-	}
+	//IndexBuffer::IndexBuffer()
+	//{
+	//	glGenBuffers(1, &m_IndexBufferRef);
+	//	ASSERT(m_IndexBufferRef != 0);
+	//}
 
+
+	IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other)
+	{
+		if (this != &other)
+		{
+			if (m_IndexBufferRef != 0)
+			{
+				glDeleteBuffers(1, &m_IndexBufferRef);
+			}
+
+			m_IndexBufferRef = other.m_IndexBufferRef;
+			other.m_IndexBufferRef = 0;
+			m_Data = other.m_Data;
+		}
+
+		return *this;
+	}
 
 	IndexBuffer::IndexBuffer(const std::vector<unsigned int>& data) : m_Data(data)
 	{
 		glGenBuffers(1, &m_IndexBufferRef);
 		ASSERT(m_IndexBufferRef != 0);
-		UploadIndex();
+		LoadIndex();
 	}
 
 	void IndexBuffer::AddIndexData(const std::vector<unsigned int>& data)
 	{
 		ASSERT(m_Data.empty());
 		m_Data = data;
-		UploadIndex();
+		LoadIndex();
 
 	}
 
-	void IndexBuffer::UploadIndex()
+	void IndexBuffer::LoadIndex()
 	{
 
-		ASSERT(m_IndexBufferRef != 0);
+		//ASSERT(m_IndexBufferRef != 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferRef);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Data.size() * sizeof(unsigned int), m_Data.data(), GL_STATIC_DRAW);
 	}
@@ -46,7 +63,8 @@ namespace GEngine::Buffer
 
 	IndexBuffer::~IndexBuffer()
 	{
-		glDeleteBuffers(1, &m_IndexBufferRef);
+		if(m_IndexBufferRef != 0)
+			glDeleteBuffers(1, &m_IndexBufferRef);
 	}
 
 

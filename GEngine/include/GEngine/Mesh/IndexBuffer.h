@@ -7,14 +7,19 @@ namespace GEngine::Buffer
 	{
 
 	public:
-		NONCOPYMOVABLE(IndexBuffer);
-		IndexBuffer();
+		NONCOPYABLE(IndexBuffer);
+		IndexBuffer() = default;
+
+		IndexBuffer(IndexBuffer&& other);
+
+		IndexBuffer& operator = (IndexBuffer&& other);
+
 		IndexBuffer(const std::vector<unsigned int>& data);
 		unsigned int GetBufferRef()const { return m_IndexBufferRef; }
 
 		void AddIndexData(const std::vector<unsigned int>& data);
 
-		void UploadIndex();
+		void LoadIndex();
 
 		void Bind();
 		void Unbind();
