@@ -46,6 +46,7 @@ namespace GEngine
 	}
 
 
+
 	void Actor::Add(const std::initializer_list<Actor*>& children)
 	{
 		for (auto& p : children)
