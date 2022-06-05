@@ -11,13 +11,14 @@ namespace GEngine
 
 	namespace Math
 	{
-
+		typedef float Vec1f;
 		typedef glm::vec2  Vec2f;
 		typedef glm::vec3  Vec3f;
 		typedef glm::vec4  Vec4f;
-		typedef glm::ivec2 iVec2;
-		typedef glm::ivec3 iVec3;
-		typedef glm::ivec4 iVec4;
+		typedef int Vec1i;
+		typedef glm::ivec2 Vec2i;
+		typedef glm::ivec3 Vec3i;
+		typedef glm::ivec4 Vec4i;
 		typedef glm::mat4  Mat4;
 		typedef glm::mat3  Mat3;
 		typedef glm::mat2  Mat2;

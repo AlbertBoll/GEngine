@@ -10,9 +10,6 @@ namespace GEngine::Buffer
 	{
 
 	public:
-		//using GEngine::Buffer = GEngine::Geometry;
-		//friend class GEngine::Geometry::Geometry;
-
 		std::vector<T> m_Data;
 		unsigned int m_BufferRef{};
 		bool b_Normalized = false;
@@ -36,8 +33,6 @@ namespace GEngine::Buffer
 		void AssociateSlot(unsigned int location);
 
 		void AssociateAttributeName(unsigned int programRef, const std::string& variableName);
-		
-		//void SetName
 
 
 	};
