@@ -37,7 +37,7 @@ namespace GEngine::Asset
 		Shader();
 		~Shader();
 
-		//Shader class holds resource, make it non copyable and non movable
+		//Shader class holds resource, make it non copyable
 		NONCOPYABLE(Shader);
 		Shader(Shader&& other)noexcept;
 		Shader& operator=(Shader&& other)noexcept;
