@@ -374,8 +374,9 @@ namespace GEngine
                 Connect<Type, PtrToMemFun>(const_cast<Type&>(p));
             }
         }
-
+        
    
+
         void Disconnect(const Delegate<Ret(Args...)>& delegate)
         {
             mDelegates.erase(std::remove_if(mDelegates.begin(), mDelegates.end(), [&](const Delegate<Ret(Args...)>& d)
@@ -442,6 +443,7 @@ namespace GEngine
    // #define Connect(sender, signal, receiver, className ,slot) (sender).signal.Connect<className, slot>(receiver)
 
     #define Connection(sender, signal, receiver, className,...) (sender).signal.Connect<className, __VA_ARGS__>(receiver)
+    #define Disconnection(sender, signal, delegate_) (sender).signal.Disconnect(delegate_)
 
 # if 0
 	/*template<typename>class SlotBase;
