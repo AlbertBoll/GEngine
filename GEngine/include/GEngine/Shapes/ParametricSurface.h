@@ -5,7 +5,7 @@
 
 namespace GEngine::Shape
 {
-	using namespace GEngine::Math;
+	using namespace Math;
 	class ParametricSurface : public Geometry
 	{
 		//typedef Vec3f(*SurfaceFunc)(float u, float v);
@@ -143,7 +143,7 @@ namespace GEngine::Shape
 
 			AddAttributes(positionData, colorData, uvData, vertexNormalData);
 			//AddAttributes(positionData, colorData, uvData, vertexNormalData, faceNormalData);
-	
+			//UnBindVAO();
 		}
 
 		[[nodiscard]] glm::vec3 GetNormal(const glm::vec3& p0, const glm::vec3& p1, const glm::vec3& p2) const

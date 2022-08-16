@@ -2,6 +2,7 @@
 #include "Core/Actor.h"
 #include "Math/Matrix.h"
 #include "Core/Log.h"
+#include <glm/gtc/type_ptr.hpp>
 
 namespace GEngine
 {
@@ -17,7 +18,8 @@ namespace GEngine
 		other.m_Parent = nullptr;
 		m_Visible = other.m_Visible;
 		other.m_Visible = false;
-		m_TransformComponent = std::move(other.m_TransformComponent);
+		m_LocalTransformComponent = std::move(other.m_LocalTransformComponent);
+		//m_GlobalTransformComponent = std::move(other.m_GlobalTransformComponent);
 		m_Tag = std::move(other.m_Tag);
 	}
 
@@ -32,19 +34,28 @@ namespace GEngine
 			other.m_Parent = nullptr;
 			m_Visible = other.m_Visible;
 			other.m_Visible = false;
-			m_TransformComponent = std::move(other.m_TransformComponent);
+			m_LocalTransformComponent = std::move(other.m_LocalTransformComponent);
+			//m_GlobalTransformComponent = std::move(other.m_GlobalTransformComponent);
 			m_Tag = std::move(other.m_Tag);
 		}
 
 		return *this;
 	}
 
-	void Actor::PrintTransform()
+	Actor::~Actor()
 	{
-		
-		std::cout << m_TransformComponent.Transform << std::endl;
+		std::cout << m_Tag.Name << " Desrtuctor was called!" << std::endl;
 	}
 
+	//void Actor::PrintGlobalTransform()
+	//{
+	//	std::cout << (Mat4)m_GlobalTransformComponent << std::endl;
+	//}
+
+	void Actor::PrintLocalTransform()const
+	{
+		std::cout << (Mat4)m_LocalTransformComponent << std::endl;
+	}
 
 
 	void Actor::Add(const std::initializer_list<Actor*>& children)
@@ -77,35 +88,84 @@ namespace GEngine
 
 	Mat4 Actor::GetWorldTransform() const
 	{
+
 		auto condition = bool_variant(!m_Parent);
 
-		return std::visit([&](auto has_no_parent)
+		/*if (!m_Parent)
+		{
+			return m_TransformComponent;
+		}
+
+		else 
+		{
+			return m_Parent->GetWorldTransform() * (Mat4)m_TransformComponent;
+		}*/
+
+		return std::visit([&](auto condition)
 				{
-				if constexpr (has_no_parent)
+				if constexpr (condition)
 				{
-					return m_TransformComponent.Transform;
+					return (Mat4)m_LocalTransformComponent;
 				}
 
-				else if constexpr (!has_no_parent)
+				else if constexpr (!condition)
 				{
-					return m_Parent->GetWorldTransform() * m_TransformComponent.Transform;
+					return m_Parent->GetWorldTransform() * (Mat4)m_LocalTransformComponent;
 				}
  
 			}, condition);
 	}
 
+	Mat4 Actor::GetWorldTransform()
+	{
+		auto condition = bool_variant(!m_Parent);
+
+		auto transform = std::visit([&](auto condition)
+			{
+				if constexpr (condition)
+				{
+					return (Mat4)m_LocalTransformComponent;
+				}
+
+				else if constexpr (!condition)
+				{
+					return m_Parent->GetWorldTransform() * (Mat4)m_LocalTransformComponent;
+				}
+
+			}, condition);
+
+
+		return transform;
+	}
+
+
+
+	Mat4& Actor::GetLocalTransform()
+	{
+
+		return m_LocalTransformComponent.Transform;
+	
+	}
+
+
+
+	Mat4 Actor::GetLocalTransform() const
+	{
+		return m_LocalTransformComponent.Transform;
+	}
 
 	void Actor::ApplyTransform(const Mat4& transform, bool isLocal)
 	{
 		auto is_local = bool_variant(isLocal);
 
+
 		std::visit([&](auto is_local)
 			{
 				if constexpr (is_local)
-					m_TransformComponent.Transform = m_TransformComponent.Transform * transform;
+					m_LocalTransformComponent.Transform = m_LocalTransformComponent.Transform * transform;
 
 				else if constexpr (!is_local)
-					m_TransformComponent.Transform = transform * m_TransformComponent.Transform;
+					m_LocalTransformComponent.Transform = transform * m_LocalTransformComponent.Transform;
 			}, is_local);
 		
 		
@@ -114,21 +174,60 @@ namespace GEngine
 
 	void Actor::Translate(float x, float y, float z, bool isLocal)
 	{
+		m_LocalTransformComponent.Translation.x += x;
+		m_LocalTransformComponent.Translation.y += y;
+		m_LocalTransformComponent.Translation.z += z;
 		ApplyTransform(Matrix::MakeTranslation(x, y, z), isLocal);
 	}
 
 	void Actor::RotateX(float angle, bool isLocal)
 	{
+		//m_LocalTransformComponent.Rotation.x += angle;
+		//m_LocalTransformComponent.ReCalculateTransform();
 		ApplyTransform(Matrix::MakeRotationX(angle), isLocal);
+	}
+
+	void Actor::SetYaw(float yaw)
+	{
+		//GetTranslation().y = yaw;
+		m_LocalTransformComponent = (Mat4)m_LocalTransformComponent * Matrix::MakeRotationY(yaw);
+	}
+
+	void Actor::SetPitch(float pitch)
+	{
+		//GetTranslation().x = pitch;
+		m_LocalTransformComponent = (Mat4)m_LocalTransformComponent * Matrix::MakeRotationX(pitch);
+	}
+
+	void Actor::SetRoll(float roll)
+	{
+		//GetTranslation().z = roll;
+		m_LocalTransformComponent = (Mat4)m_LocalTransformComponent * Matrix::MakeRotationZ(roll);
 	}
 
 	void Actor::RotateY(float angle, bool isLocal)
 	{
+		//m_LocalTransformComponent.Rotation.y += angle;
+		//m_LocalTransformComponent.ReCalculateTransform();
 		ApplyTransform(Matrix::MakeRotationY(angle), isLocal);
+	}
+
+	void Actor::SetRotation(int index, float angle)
+	{
+		if (index == 1) RotateX(angle);
+		else if (index == 2) RotateY(angle);
+		else RotateZ(angle);
+	}
+
+	void Actor::SetRotation(const Vec3f& rot)
+	{
+
 	}
 
 	void Actor::RotateZ(float angle, bool isLocal)
 	{
+		//m_LocalTransformComponent.Rotation.z += angle;
+		//m_LocalTransformComponent.ReCalculateTransform();
 		ApplyTransform(Matrix::MakeRotationZ(angle), isLocal);
 	}
 
@@ -139,35 +238,102 @@ namespace GEngine
 
 	void Actor::Scale(float scale, bool isLocal)
 	{
+		m_LocalTransformComponent.Scale = { scale, scale, scale };
 		ApplyTransform(Matrix::MakeScale(scale), isLocal);
+	}
+
+	void Actor::SetScale(const Vec3f& scale, bool isLocal)
+	{
+		//m_LocalTransformComponent.Scale = scale;
+		ApplyTransform(Matrix::MakeScale(scale), isLocal);
+	}
+
+	void Actor::SetScale(int index, float value)
+	{
+		if (index == 1) SetScaleX(value);
+		else if (index == 2) SetScaleY(value);
+		else SetScaleZ(value);
+	}
+
+	void Actor::SetInverseScale(int index, float value)
+	{
+		if (index == 1) SetScaleX(1.f/value);
+		else if (index == 2) SetScaleY(1.f/value);
+		else SetScaleZ(1.f/value);
+	}
+
+	void Actor::SetScaleX(float scale, bool isLocal)
+	{
+		//m_LocalTransformComponent.Scale.x = scale;
+		//if(scale!=0.0f)
+		
+		ApplyTransform(Matrix::MakeScaleX(scale), isLocal);
+	}
+
+	void Actor::SetScaleY(float scale, bool isLocal)
+	{
+		//m_LocalTransformComponent.Scale.y = scale;
+		ApplyTransform(Matrix::MakeScaleY(scale), isLocal);
+	}
+
+	void Actor::SetScaleZ(float scale, bool isLocal)
+	{
+		//m_LocalTransformComponent.Scale.z = scale;
+		ApplyTransform(Matrix::MakeScaleZ(scale), isLocal);
 	}
 
 	Vec3f Actor::GetWorldPosition() const
 	{
 		auto world_transform = GetWorldTransform();
+	
 		return { world_transform[3][0], world_transform[3][1] , world_transform[3][2] };
 	}
 
+
 	void Actor::SetPosition(const Vec3f& pos)
 	{
+		m_LocalTransformComponent.Translation = pos;
+		m_LocalTransformComponent.Transform[3][0] = pos.x;
+		m_LocalTransformComponent.Transform[3][1] = pos.y;
+		m_LocalTransformComponent.Transform[3][2] = pos.z;
+	}
 
-		m_TransformComponent.Transform[3][0] = pos.x;
-		m_TransformComponent.Transform[3][1] = pos.y;
-		m_TransformComponent.Transform[3][2] = pos.z;
+	void Actor::SetPositionX(float x)
+	{
+		m_LocalTransformComponent.Transform[3][0] = x;
+	}
+
+	void Actor::SetPositionY(float y)
+	{
+		m_LocalTransformComponent.Transform[3][1] = y;
+	}
+
+	void Actor::SetPositionZ(float z)
+	{
+		m_LocalTransformComponent.Transform[3][2] = z;
+	}
+
+	void Actor::SetPosition(int index, float value)
+	{
+		if (index == 1) SetPositionX(value);
+		else if (index == 2) SetPositionY(value);
+		else SetPositionZ(value);
+
 	}
 
 
 	void Actor::SetPosition(float x, float y, float z)
 	{
-		m_TransformComponent.Transform[3][0] = x;
-		m_TransformComponent.Transform[3][1] = y;
-		m_TransformComponent.Transform[3][2] = z;
+		m_LocalTransformComponent.Translation = {x, y, z};
+		m_LocalTransformComponent.Transform[3][0] = x;
+		m_LocalTransformComponent.Transform[3][1] = y;
+		m_LocalTransformComponent.Transform[3][2] = z;
 	}
 
 
 	void Actor::LookAt(const Vec3f& target_position)
 	{
-		m_TransformComponent.Transform = Matrix::MakeLookAt(GetWorldPosition(), target_position);
+		m_LocalTransformComponent = Matrix::MakeLookAt(GetWorldPosition(), target_position);
 	}
 
 	Mat3 Actor::GetStrongRotationMatrix() const
@@ -202,6 +368,38 @@ namespace GEngine
 		const auto self_pos = GetWorldPosition();
 		const auto target_pos = self_pos + direction;
 		LookAt(target_pos);
+	}
+
+
+	void Actor::UpdateLocalTransform()
+	{
+		m_LocalTransformComponent.Transform =  Matrix::CalTransformation(GetTranslation(), GetRotation(), GetScale());
+	}
+
+
+	Quat Actor::GetOrientation() const
+	{
+		float yaw = GetYaw();
+		float pitch = GetPitch();
+		return Quat(Vec3f(-pitch, -yaw, 0.f));
+	}
+
+
+	Vec3f Actor::GetForwardDirection() const
+	{
+		return glm::rotate(GetOrientation(), Vec3f(0.0f, 0.0f, -1.0f));
+	}
+
+
+	Vec3f Actor::GetUpDirection() const
+	{
+		return glm::rotate(GetOrientation(), Vec3f(0.0f, 1.0f, 0.0f));
+	}
+
+
+	Vec3f Actor::GetRightDirection() const
+	{
+		return glm::rotate(GetOrientation(), Vec3f(1.0f, 0.0f, 0.0f));
 	}
 
 

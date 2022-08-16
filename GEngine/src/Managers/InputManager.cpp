@@ -3,6 +3,7 @@
 #include "Core/BaseApp.h"
 #include "Managers/WindowManager.h"
 #include "Managers/EventManager.h"
+#include "Windows/SDLWindow.h"
 
 namespace GEngine::Manager
 {
@@ -163,18 +164,22 @@ namespace GEngine::Manager
 
     void InputManager::Update()
     {
-        int x = 0, y = 0;
+
+       int x = 0, y = 0;
+       
         if (m_InputState.m_Mouse.m_IsRelative)
         {
-            m_InputState.m_Mouse.m_CurrentButtons =
-                SDL_GetRelativeMouseState(&x, &y);
+          
+                m_InputState.m_Mouse.m_CurrentButtons =
+                    SDL_GetRelativeMouseState(&x, &y);
         }
-        else
+
+       else
         {
             m_InputState.m_Mouse.m_CurrentButtons =
                 SDL_GetMouseState(&x, &y);
         }
-
+        
 
         m_InputState.m_Mouse.m_MousePos.x = static_cast<float>(x);
         m_InputState.m_Mouse.m_MousePos.y = static_cast<float>(y);
@@ -221,6 +226,11 @@ namespace GEngine::Manager
         //Event::EventManager::OnUpdate(event);
     }
 
+
+    void InputManager::SetSDLWindow(SDLWindow* window)
+    {
+        m_SDLWindow = window;
+    }
 
     void InputManager::SetRelativeMouseMode(bool value)
     {

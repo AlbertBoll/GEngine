@@ -3,6 +3,7 @@
 #include <Mesh/Attribute.h>
 #include <unordered_map>
 #include <variant>
+#include "Core/Utility.h"
 
 
 namespace GEngine
@@ -10,22 +11,27 @@ namespace GEngine
 	using namespace Buffer;
 	class Geometry
 	{
-	public:
+
+	private:
+
+		friend class Entity;
 		std::unordered_map<unsigned int, std::variant<Attribute<Vec4f>,
-												      Attribute<Vec3f>,
-												      Attribute<Vec2f>,
-			                                          Attribute<Vec1f>,
-												      Attribute<Vec1i>,
-			                                          Attribute<Vec2i>, 
-			                                          Attribute<Vec3i>,
-			                                          Attribute<Vec4i>,
-												      Attribute<Mat2>,
-												      Attribute<Mat3>,
-												      Attribute<Mat4>>> m_Attributes;
+			Attribute<Vec3f>,
+			Attribute<Vec2f>,
+			Attribute<Vec1f>,
+			Attribute<Vec1i>,
+			Attribute<Vec2i>,
+			Attribute<Vec3i>,
+			Attribute<Vec4i>,
+			Attribute<Mat2>,
+			Attribute<Mat3>,
+			Attribute<Mat4>>> m_Attributes;
 
 		IndexBuffer m_IndexBuffer; // Hold index buffer
 
 		std::vector<unsigned int> m_Buffers; //keep reference of active BufferRef 
+
+		unsigned int m_Vao{};
 
 		int m_IndicesCount{};
 		int m_VertexCount{};
@@ -35,15 +41,18 @@ namespace GEngine
 
 	public:
 
-		Geometry() = default;
+		Geometry();
 
 		//virtual ~Geometry() = default;
 
 		virtual ~Geometry();
 
-	
+
 
 		void CountVertices();
+
+		void BindVAO()const;
+		void UnBindVAO()const;
 
 		void AddIndices(const std::vector<unsigned int>& data);
 
@@ -55,38 +64,41 @@ namespace GEngine
 		template<typename Attrib, typename... Attribs>
 		void AddAttributes(const Attrib& data, const Attribs&... rest);
 
-		void ApplyTransform(const Mat4 & transform, unsigned int location = 0, bool bNormal = false);
+		void ApplyTransform(const Mat4& transform, unsigned int location = 0, bool bNormal = false);
 
 		void Merge(Geometry* otherGeo);
 
+		//virtual Geometry* Create() = 0;
 	};
 
 
 	template<typename Attrib>
 	inline void Geometry::AddAttributes(const Attrib& data)
 	{
-		if (!data.empty())
+		//if (!data.empty())
+		//{
+		Attribute attribute = Attribute(data);
+		m_Buffers.push_back(attribute.GetBufferRef());
+		m_Attributes.emplace(m_Binding++, attribute);
+
+		//m_Attributes.insert({ m_Binding++, Attribute(data) });
+
+		if (!b_HasRecursive)
 		{
-			Attribute attribute = Attribute(data);
-			m_Buffers.push_back(attribute.GetBufferRef());
-			m_Attributes.emplace(m_Binding++, attribute);
-
-			//m_Attributes.insert({ m_Binding++, Attribute(data) });
-
-			if (!b_HasRecursive)
-			{
-				CountVertices();
-				b_HasRecursive = true;
-			}
-
+			CountVertices();
+			b_HasRecursive = true;
 		}
+
+		//}
 	}
 	template<typename Attrib, typename ...Attribs>
 	void Geometry::AddAttributes(const Attrib& data, const Attribs & ...rest)
 	{
-		
+
 		AddAttributes(data);
 		AddAttributes(rest...);
-		
+
 	}
+
+
 }

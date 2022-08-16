@@ -20,6 +20,9 @@ externals["glad"] = "external/glad"
 externals["tbb"] = "external/tbb"
 externals["rttr"] = "external/rttr"
 externals["reflection"] = "external/reflection"
+externals["entt"] = "external/entt"
+--externals["imguizmo"] = "external/imguizmo"
+
 
 include "external/glad"
 
@@ -45,7 +48,10 @@ project "GEngine"
 		"%{prj.name}/include/**.cpp",
 		"%{prj.name}/include/**.hpp",
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/**.natvis"
+		--"%{externals.imguizmo}/include/ImGuizmo.h",
+		--"%{externals.imguizmo}/include/ImGuizmo.cpp"
 	}
 
 	sysincludedirs
@@ -57,7 +63,9 @@ project "GEngine"
 		"%{externals.glad}/include",
 		"%{externals.tbb}/include",
 		"%{externals.rttr}/include",
-		"%{externals.reflection}/include"
+		"%{externals.reflection}/include",
+		"%{externals.entt}/include"
+		--"%{externals.imguizmo}/include"
 		--"%{prj.name}/src"
 
 	}
@@ -76,6 +84,7 @@ project "GEngine"
 	}
 
 
+
 	buildoptions "/MTd"
 
 
@@ -86,6 +95,9 @@ project "GEngine"
 		"GENGINE_PLATFORM_WINDOWS",
 		"GENGINE_WINDOW_SDL"
 	}
+
+	filter "files:GEngine/include/external/imguizmo/**.cpp"
+	flags {"NoPCH"}
 
 	-- Linux
 	filter
@@ -169,11 +181,18 @@ project "GEngineEditor"
 		"GEngine/include",
 		"GEngine/include/external",
 		"GEngine/include/GEngine",
-		"%{externals.reflection}/include"
+		"%{externals.reflection}/include",
+		"%{externals.spdlog}/include",
+		"%{externals.entt}/include"
+		--"%{externals.imguizmo}/include"
 		--"%{externals.tbb}/include"
 		--"%{externals.glad}/include"
-		--"%{externals.spdlog}/include"
 
+	}
+	
+	postbuildcommands
+	{
+		"python " .. path.getabsolute("%{prj.name}") .. "/postbuild.py config=%{cfg.buildcfg} prj=%{prj.name}"
 	}
 
 	-- Windows
@@ -208,8 +227,8 @@ project "GEngineEditor"
 		"tbb12",
 		"tbb12_debug",
 		"tbb",
-		"tbb_debug"
-
+		"tbb_debug",
+		"SDL2_ttf"
 	}
 
 	-- Linux

@@ -15,16 +15,19 @@ Config = "Debug" if "-d" in sys.argv else "Release" # if "-r" in sys.argv else N
 
 
 
-def RunCommand(cmd, arg=""):
+def RunCommand(cmds):
     ret = 0
-    script = "{}/{}/{}.py".format(os.getcwd(), TOOLS_DIR, cmd)
-    if os.path.exists(script):
-        print("Executing: ", cmd)
-        ret = subprocess.call(["python", script, arg])
+    #script = "{}/{}/{}.py".format(os.getcwd(), TOOLS_DIR, cmds)
+    cmds[0] = "{}/{}/{}.py".format(os.getcwd(), TOOLS_DIR, cmds[0])
+    if os.path.exists(cmds[0]):
+        #print("Executing: ", cmds)
+        cmds.insert(0, "python")
+        ret = subprocess.call(cmds)
+        #ret = subprocess.call(["python", script, arg])
         return ret
 
     else:
-        print("Invalid command: ", cmd)
+        print("Invalid command: ", cmds[0])
         ret = -1
 
     return ret
@@ -39,20 +42,48 @@ def CaptureArg():
     else:
         return ""
 
-
-
-if __name__ == "__main__":
-
-    arg = CaptureArg() 
-    length = len(sys.argv) - 1 if "-" in sys.argv[-1] else len(sys.argv) 
-    for i in range(1, length):
+# ---- Main Entry Point ---- #
+argc = len(sys.argv)
+i = 1
+print(sys.argv)
+while i < argc:
+    cmds = [sys.argv[i]]
+    
+    while True:
+        if i < argc - 1 and sys.argv[i+1][0] == "-":
+            cmds.append(sys.argv[i+1][1:])
+            i = i+1
         
-        cmd = sys.argv[i]
-       
-        print("\n-----------------------------")
-
-        if RunCommand(cmd, arg) != 0:
+        else:
             break
+        
+    #print(cmds)
+
+    print("\n------------------------------------------")
+    
+    print("Executing: ", cmds[0])
+    
+    if len(cmds) > 1:
+       print("With arguments: {}".format(", ".join(cmds[1:])))
+    #print(cmds)
+    if RunCommand(cmds) != 0:
+        break
+        
+    i = i + 1
+
+
+#if __name__ == "__main__":
+
+    #arg = CaptureArg() 
+    #length = len(sys.argv) - 1 if "-" in sys.argv[-1] else len(sys.argv) 
+    #for i in range(1, length):
+        
+       # cmd = sys.argv[i]
+       
+        #print("\n-----------------------------")
+
+        #if RunCommand(cmd, arg) != 0:
+            #break
 
         
 

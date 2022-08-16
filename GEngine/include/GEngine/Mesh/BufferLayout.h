@@ -53,7 +53,7 @@ namespace GEngine::Buffer
 		AttributeType m_Type;
 		std::string m_Name;
 		uint32_t m_Size;
-		uint32_t m_Offset;
+		uint64_t m_Offset;
 		bool m_Normalized;
 
 		Attribute(AttributeType type, const std::string& name, bool normalized = false) : m_Type(type), m_Name(name), m_Size(AttributeTypeSize(type)), m_Offset(0),  m_Normalized(normalized){}

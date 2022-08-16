@@ -1,10 +1,11 @@
 #pragma once
 #include "Utility.h"
 #include <string>
+#include"Windows/ImGuiWindow.h"
 
 namespace GEngine
 {
-
+	class BaseApp;
 	//enum GraphicContext
 	//{
 	//	OPENGL,
@@ -43,6 +44,8 @@ namespace GEngine
 		uint32_t m_Height = 600;
 		uint32_t m_MinWidth = 480;
 		uint32_t m_MinHeight = 320;
+
+		float m_AspectRatio = 16.f / 9.f;
 		float m_Red = 0.f;
 		float m_Green = 0.f;
 		float m_Blue = 0.f;
@@ -51,6 +54,7 @@ namespace GEngine
 		int m_XPaddingToCenterY = 20;
 		int m_YPaddingToCenterX = 20;
 		bool m_IsVsync = true;
+		ImGuiWindowProperties ImGuiWindowProperties = {};
 
 		void SetColor(float R, float G, float B) { m_Red = R; m_Green = G; m_Blue = B; }
 		void SetCornFlowerBlue() {
@@ -67,15 +71,17 @@ namespace GEngine
 
 		virtual ~Window(){};
 		uint32_t GetScreenWidth()const { return m_ScreenWidth; }
-		uint32_t GetScreenHeight()const { return m_ScreenWidth; }
+		uint32_t GetScreenHeight()const { return m_ScreenHeight; }
 		virtual void Initialize(const WindowProperties& winProp = {}) = 0;
-		virtual void SwapBuffer()const = 0;
+		virtual void SwapBuffer() = 0;
 		virtual void ShutDown() = 0;
 		virtual void SetTitle(const std::string& title) const = 0;
 		virtual std::string GetTitle() const = 0;
 		virtual uint32_t GetWindowID()const = 0;
-		virtual void BeginRender() const = 0;
-		virtual void EndRender() const = 0;
+
+		virtual void NullRender() = 0;
+		virtual void BeginRender()  = 0;
+		virtual void EndRender(BaseApp* app)  = 0;
 		virtual void OnResize(int new_width, int new_height) = 0;
 
 	
@@ -86,6 +92,7 @@ namespace GEngine
 
 	protected:
 		uint32_t m_ScreenWidth, m_ScreenHeight;
+		float m_AspectRatio = 16.f / 9.f;
 
 	};
 

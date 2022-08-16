@@ -2,24 +2,25 @@
 #include "Managers/AssetsManager.h"
 #include "Assets/Textures/TextTexture.h"
 
+
 namespace GEngine::Manager
 {
-	Texture* AssetsManager::GetTexture(const std::string& texture_file, 
+	Asset::Texture* AssetsManager::GetTexture(const std::string& texture_file, 
 									   const std::string& uniform_name,
 									   const std::string& extension, 
-									   const TextureInfo& info)
+									   const Asset::TextureInfo& info)
 	{
-		if (texture_file.empty())
+	/*	if (texture_file.empty())
 		{
 			return nullptr;
-		}
+		}*/
 
 		if (auto it = m_TextureMap.find(texture_file); it != m_TextureMap.end())
 		{
 			return it->second;
 		}
 
-		Texture* new_Texture = new(std::nothrow) Texture(texture_file, extension, info);
+		Asset::Texture* new_Texture = new(std::nothrow) Asset::Texture(texture_file, extension, info);
 		ASSERT(new_Texture);
 
 		if (!uniform_name.empty()) new_Texture->SetUniformName(uniform_name);
@@ -32,7 +33,7 @@ namespace GEngine::Manager
 
 	}
 
-	Texture* AssetsManager::GetTextTexture(const std::string& str, 
+	Asset::Texture* AssetsManager::GetTextTexture(const std::string& str,
 										   const std::string& font_file, 
 										   int pointSize, 
 										   const glm::vec3& font_color, 
@@ -43,7 +44,7 @@ namespace GEngine::Manager
 			return it->second;
 		}
 
-		auto* new_texture = new(std::nothrow) TextTexture(str, font_file, pointSize, font_color);
+		auto* new_texture = new(std::nothrow) Asset::TextTexture(str, font_file, pointSize, font_color);
 		ASSERT(new_texture);
 
 		if (!uniform_name.empty()) new_texture->SetUniformName(uniform_name);
@@ -56,14 +57,14 @@ namespace GEngine::Manager
 
 
 
-	Font* AssetsManager::GetFont(const std::string& font_file)
+	Asset::Font* AssetsManager::GetFont(const std::string& font_file)
 	{
 		if (auto it = m_FontMap.find(font_file); it != m_FontMap.end())
 		{
 			return  it->second;
 		}
 
-		auto* new_font = new(std::nothrow) Font;
+		auto* new_font = new(std::nothrow) Asset::Font;
 
 		ASSERT(new_font);
 		new_font->LoadFont(font_file);
@@ -78,7 +79,7 @@ namespace GEngine::Manager
 		
 		for (auto& ele : m_TextureMap)
 		{
-			delete ele.second;
+			if(ele.second) delete ele.second;
 		}
 		
 	}
@@ -87,7 +88,7 @@ namespace GEngine::Manager
 	{
 		for (auto& ele : m_FontMap)
 		{
-			delete ele.second;
+			if(ele.second) delete ele.second;
 		}
 	}
 

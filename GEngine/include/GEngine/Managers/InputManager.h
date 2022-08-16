@@ -18,11 +18,15 @@ struct _SDL_GameController;
 using namespace GEngine::Input::Key;
 using namespace GEngine::Input::Mouse;
 using namespace GEngine::Input::Controller;
+namespace GEngine
+{
+	class SDLWindow;
+}
 
 namespace GEngine::Manager
 {
 	using namespace Math;
-
+	
 
 	enum class ButtonState
 	{
@@ -64,14 +68,19 @@ namespace GEngine::Manager
 		bool isButtonPressed(GEngineMouseCode button) const { return GetButtonState(button) == ButtonState::Pressed; }
 		bool isButtonHeld(GEngineMouseCode button) const { return GetButtonState(button) == ButtonState::Held; }
 		bool isButtonReleased(GEngineMouseCode button) const { return GetButtonState(button) == ButtonState::Released; }
+		[[nodiscard]] bool IsRelative() const { return m_IsRelative; }
 
-	private:
+		
+	public:
 		friend class MouseEvent;
 		friend class InputManager;
 		Vector2 m_MousePos;
 		Vector2 m_ScrollWheel;
 		uint32_t m_CurrentButtons;
 		uint32_t m_PreviousButtons;
+
+		int32_t m_XRel{};
+		int32_t m_YRel{};
 
 		//Are we in relative mouse mode
 		bool m_IsRelative;
@@ -122,10 +131,12 @@ namespace GEngine::Manager
 		ControllerState m_Controller;
 	};
 
-
+	
 	class InputManager: public ManagerBase<InputManager>
 	{
 		friend class ManagerBase<InputManager>;
+	
+		
 	public:
 
 		
@@ -148,7 +159,7 @@ namespace GEngine::Manager
 		KeyboardState& GetKeyboardState() { return m_InputState.m_Keyboard; }
 		MouseState& GetMouseState() { return m_InputState.m_Mouse; }
 		ControllerState& GetControllerState() { return m_InputState.m_Controller; }
-
+		void SetSDLWindow(SDLWindow* window);
 
 
 
@@ -164,6 +175,7 @@ namespace GEngine::Manager
 	private:
 		InputState m_InputState;
 		_SDL_GameController* m_GameController{};
+		SDLWindow* m_SDLWindow{};
 
 	};
 

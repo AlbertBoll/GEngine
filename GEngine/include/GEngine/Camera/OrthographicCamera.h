@@ -15,6 +15,8 @@ namespace GEngine::Camera
 
 		void OnResize(int new_width, int new_height) override;
 
+		void OnResize(float ratio) override;
+
 		void OnScroll(float new_zoom_level)override{}
 	};
 }

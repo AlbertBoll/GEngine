@@ -6,6 +6,7 @@
 #include "Events/KeyboardEvent.h"
 #include "Events/ApplicationEvent.h"
 #include "Core/BaseApp.h"
+#include "Windows/SDLWindow.h"
 
 
 using namespace GEngine::Event;
@@ -14,45 +15,7 @@ using namespace GEngine::Event;
 namespace GEngine::Manager
 {
 
-	struct MouseScrollWheelParam
-	{
-		unsigned int ID;
-		float X;
-		float Y;
-	};
 	
-
-	struct MouseMoveParam
-	{
-		unsigned int ID;
-		int32_t XPos;
-		int32_t YPos;
-	};
-
-	struct MouseButtonParam
-	{
-		
-		unsigned int ID;
-		int32_t X;
-		int32_t Y;
-		uint8_t Button;
-		uint8_t Clicks;
-	};
-
-	struct WindowCloseParam
-	{
-
-		unsigned int ID;
-	};
-
-
-	struct WindowResizeParam
-	{
-		unsigned int ID;
-		int Width;
-		int Height;
-	};
-
 
 	ScopedPtr<EventManager> EventManager::GetScopedInstance()
 	{
@@ -67,47 +30,35 @@ namespace GEngine::Manager
 	{	
 		using namespace GEngine;
 
-		auto AppQuitEvent = new Events<void()>("AppQuit");
+		//auto AppQuitEvent = new Events<void()>("ApplicationQuit");
 		auto WindowCloseEvent = new Events<void(WindowCloseParam)>("WindowClose");
-		auto WindowResizeEvent = new Events<void(WindowResizeParam)>("WindowResize");
-		auto KeyPressEvent = new Events<void(const char*)>("KeyPress");
-		auto KeyRepeatEvent = new Events<void(const char*)>("KeyRepeat");
-		auto KeyReleaseEvent = new Events<void(const char*)>("KeyRelease");
-		auto MouseButtonPressEvent = new Events<void(MouseButtonParam)>("MouseButtonPress");
-		auto MouseButtonReleaseEvent = new Events<void(MouseButtonParam)>("MouseButtonRelease");
+		//auto KeyPressEvent = new Events<void(const char*)>("KeyPress");
+		//auto KeyRepeatEvent = new Events<void(const char*)>("KeyRepeat");
+		//auto KeyReleaseEvent = new Events<void(const char*)>("KeyRelease");
+		//auto MouseButtonPressEvent = new Events<void(MouseButtonParam)>("MouseButtonPress");
+		//auto MouseButtonReleaseEvent = new Events<void(MouseButtonParam)>("MouseButtonRelease");
 		auto MouseMoveEvent = new Events<void(MouseMoveParam)>("MouseMove");
-		auto MouseScrollWheelEvent = new Events<void(MouseScrollWheelParam)>("MouseScrollWheel");
+	
 
 
-		MouseScrollWheelEvent->Subscribe([](const MouseScrollWheelParam& scrollWheelParam)
-			{
-				auto& engine = BaseApp::GetEngine();
-				auto* inputManager = engine.GetInputManager();
-				auto& MouseState = inputManager->GetMouseState();
+		//AppQuitEvent->Subscribe([this]()
+		//	{
+		//		auto& engine = BaseApp::GetEngine();
+		//		engine.ShutDown();
 
-				if (auto p = engine.GetWindowManager()->GetWindows().find(scrollWheelParam.ID); p != engine.GetWindowManager()->GetWindows().end())
-				{
-					GENGINE_CORE_INFO("Mouse scroll wheel at the {}. x: {}   y: {}", p->second->GetTitle(), scrollWheelParam.X, scrollWheelParam.Y);
-				}
-
-				MouseState.SetScrollWheel(Vector2(
-					static_cast<float>(scrollWheelParam.X),
-					static_cast<float>(scrollWheelParam.Y)));
-			});
+		//	}); 
 
 
 		MouseMoveEvent->Subscribe([](const MouseMoveParam& moveParam)
 			{
-				auto& engine = BaseApp::GetEngine();
-				if (auto p = engine.GetWindowManager()->GetWindows().find(moveParam.ID); p != engine.GetWindowManager()->GetWindows().end())
-				{
-					GENGINE_CORE_INFO("Mouse moves to the {}. xPos: {}   yPos: {}", p->second->GetTitle(), moveParam.XPos, moveParam.YPos);
-				}
+				auto& mouseState = BaseApp::GetEngine().GetInputManager()->GetMouseState();
+				mouseState.m_XRel = moveParam.XPos;
+				mouseState.m_YRel = moveParam.YPos;			
 
 			});
 
 
-		MouseButtonReleaseEvent->Subscribe([](const MouseButtonParam& buttonParam)
+		/*MouseButtonReleaseEvent->Subscribe([](const MouseButtonParam& buttonParam)
 			{
 				auto& engine = BaseApp::GetEngine();
 				if (auto p = engine.GetWindowManager()->GetWindows().find(buttonParam.ID); p != engine.GetWindowManager()->GetWindows().end())
@@ -119,11 +70,11 @@ namespace GEngine::Manager
 					else
 						GENGINE_CORE_INFO("Right Mouse button was release at {}. Window coords ({}, {})", p->second->GetTitle(), buttonParam.X, buttonParam.Y);
 				}
-			});
+			});*/
 
 
 
-		MouseButtonPressEvent->Subscribe([](const MouseButtonParam& buttonParam)
+		/*MouseButtonPressEvent->Subscribe([](const MouseButtonParam& buttonParam)
 			{
 				auto& engine = BaseApp::GetEngine();
 				if (auto p = engine.GetWindowManager()->GetWindows().find(buttonParam.ID); p != engine.GetWindowManager()->GetWindows().end())
@@ -152,10 +103,10 @@ namespace GEngine::Manager
 							GENGINE_CORE_INFO("Right mouse button was double clicked at {}. Window coords ({}, {})", p->second->GetTitle(), buttonParam.X, buttonParam.Y);
 					}
 				}
-			});
+			});*/
 
 
-		KeyPressEvent->Subscribe([](const char* keyName)
+	/*	KeyPressEvent->Subscribe([](const char* keyName)
 			{
 				GENGINE_CORE_INFO("Key {} was pressed", keyName);
 			});
@@ -168,57 +119,38 @@ namespace GEngine::Manager
 		KeyReleaseEvent->Subscribe([](const char* keyName)
 			{
 				GENGINE_CORE_INFO("Key {} was released", keyName);
-			});
+			});*/
 
 
-		AppQuitEvent->Subscribe([]()
-			{
-
-				auto& engine = BaseApp::GetEngine();
-				
-				engine.ShutDown();
-			});
 
 		WindowCloseEvent->Subscribe(([](WindowCloseParam windowParam)
 			{
-				auto& engine = BaseApp::GetEngine();
-				if (auto p = engine.GetWindowManager()->GetWindows().find(windowParam.ID); p != engine.GetWindowManager()->GetWindows().end())
+				auto windows = BaseApp::GetWindowManager();
+				if (auto p = windows->GetWindows().find(windowParam.ID); p != windows->GetWindows().end())
 				{
-					GENGINE_CORE_INFO("Window with ID {} was closed", windowParam.ID);
-					engine.GetWindowManager()->RemoveWindow(windowParam.ID);
-					GENGINE_CORE_INFO("Window Manager Size {}", engine.GetWindowManager()->GetWindows().size());
+					//GENGINE_CORE_INFO("Window with ID {} was closed", windowParam.ID);
+					windows->RemoveWindow(windowParam.ID);
+					//GENGINE_CORE_INFO("Window Manager Size {}", windows->GetWindows().size());
 
-					auto& numWindows = engine.GetWindowManager()->GetNumOfWindows();
-					if (--numWindows == 0) {
-						engine.ShutDown();
-						GENGINE_CORE_INFO("ShutDown!");
+					//auto& numWindows = windows->GetNumOfWindows();
+					//if (numWindows == 0) {
+						//BaseApp::GetEngine().ShutDown();
+						//GENGINE_CORE_INFO("ShutDown!");
 
-					}
+					//}
 				}
 			}));
 
-		WindowResizeEvent->Subscribe([](const WindowResizeParam& windowParam)
-			{
-				
-				auto& engine = BaseApp::GetEngine();
-				if (auto p = engine.GetWindowManager()->GetWindows().find(windowParam.ID); p != engine.GetWindowManager()->GetWindows().end())
-				{
-					p->second->OnResize(windowParam.Width, windowParam.Height);
-				}
-			});
+	
 
-
-		m_EventDispatcher.RegisterEvent(AppQuitEvent);
 		m_EventDispatcher.RegisterEvent(WindowCloseEvent);
-		m_EventDispatcher.RegisterEvent(WindowResizeEvent);
-		m_EventDispatcher.RegisterEvent(KeyPressEvent);
-		m_EventDispatcher.RegisterEvent(KeyRepeatEvent);
-		m_EventDispatcher.RegisterEvent(KeyReleaseEvent);
-		m_EventDispatcher.RegisterEvent(MouseButtonPressEvent);
-		m_EventDispatcher.RegisterEvent(MouseButtonReleaseEvent);
+		//m_EventDispatcher.RegisterEvent(KeyPressEvent);
+		//m_EventDispatcher.RegisterEvent(KeyRepeatEvent);
+		//m_EventDispatcher.RegisterEvent(KeyReleaseEvent);
+		//m_EventDispatcher.RegisterEvent(MouseButtonPressEvent);
+		//m_EventDispatcher.RegisterEvent(MouseButtonReleaseEvent);
 		m_EventDispatcher.RegisterEvent(MouseMoveEvent);
-		m_EventDispatcher.RegisterEvent(MouseScrollWheelEvent);
-
+	
 
 	}
 
@@ -226,57 +158,70 @@ namespace GEngine::Manager
 
 	void EventManager::OnEvent(SDL_Event& e)
 	{
-
+		
+		auto window = static_cast<SDLWindow*>(BaseApp::GetWindowManager()->GetInternalWindow(1));
 		while(SDL_PollEvent(&e))
 		{
+			if (BaseApp::GetWindowManager()->GetNumOfWindows() != 0)
+				window->GetImGuiWindow()->HandleSDLEvent(e);
+
 			switch (e.type)
 			{
 			case SDL_QUIT:
-				m_EventDispatcher.DispatchEvent("AppQuit");
+			//case SDL_KEYDOWN:
+				m_EventDispatcher.DispatchEvent("AppClose");
 				break;
 
 			case SDL_KEYDOWN:
-				if (!e.key.repeat) 
-					m_EventDispatcher.DispatchEvent("KeyPress", SDL_GetKeyName(e.key.keysym.sym));  
+				if (!e.key.repeat)
+				{
+					m_EventDispatcher.DispatchEvent("AppQuit");
+					//m_EventDispatcher.DispatchEvent("KeyPress", SDL_GetKeyName(e.key.keysym.sym));
+				}
 
-				else 
-					m_EventDispatcher.DispatchEvent("KeyRepeat", SDL_GetKeyName(e.key.keysym.sym));
+				//else 
+					//m_EventDispatcher.DispatchEvent("KeyRepeat", SDL_GetKeyName(e.key.keysym.sym));
 				break;
 
-			case SDL_KEYUP:
-				m_EventDispatcher.DispatchEvent("KeyRelease", SDL_GetKeyName(e.key.keysym.sym));
+			case SDL_MOUSEWHEEL:
+
+				m_EventDispatcher.DispatchEvent("MouseScrollWheel", MouseScrollWheelParam{ .ID = e.wheel.windowID,
+																						   .X = e.wheel.preciseX,
+																						   .Y = e.wheel.preciseY });
 				break;
 
-			case SDL_MOUSEBUTTONDOWN:
-				m_EventDispatcher.DispatchEvent("MouseButtonPress", MouseButtonParam{ .ID = e.button.windowID, 
+			//case SDL_KEYUP:
+				//m_EventDispatcher.DispatchEvent("KeyRelease", SDL_GetKeyName(e.key.keysym.sym));
+				//break;
+
+			//case SDL_MOUSEBUTTONDOWN:
+			/*	m_EventDispatcher.DispatchEvent("MouseButtonPress", MouseButtonParam{ .ID = e.button.windowID, 
 																					   .X = e.button.x, 
 					                                                                   .Y = e.button.y ,
 					                                                                   .Button = e.button.button, 
 					                                                                   .Clicks = e.button.clicks });
 			
-				break;
+				break;*/
 
-			case SDL_MOUSEBUTTONUP:
-				m_EventDispatcher.DispatchEvent("MouseButtonRelease", MouseButtonParam{ .ID = e.button.windowID,
+				//break;
+
+			//case SDL_MOUSEBUTTONUP:
+				/*m_EventDispatcher.DispatchEvent("MouseButtonRelease", MouseButtonParam{ .ID = e.button.windowID,
 																					    .X = e.button.x,
 																					    .Y = e.button.y ,
 																					    .Button = e.button.button,
-																					    .Clicks = e.button.clicks });
+																					    .Clicks = e.button.clicks });*/
 
-				break;
+				//break;
 
 
-			case SDL_MOUSEWHEEL:
-				
-				m_EventDispatcher.DispatchEvent("MouseScrollWheel", MouseScrollWheelParam{ .ID = e.wheel.windowID,
-																						   .X = e.wheel.preciseX,
-																						   .Y = e.wheel.preciseY});
-				break;
+			
 
 			case SDL_MOUSEMOTION:
 				m_EventDispatcher.DispatchEvent("MouseMove", MouseMoveParam{ .ID = e.button.windowID,
-																			 .XPos = e.button.x,
-																			 .YPos = e.button.y });
+																			 .XPos = e.motion.xrel,
+																			 .YPos = e.motion.yrel });
+				
 				break;
 
 			case SDL_WINDOWEVENT:

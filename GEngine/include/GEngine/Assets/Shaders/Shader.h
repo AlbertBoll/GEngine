@@ -4,6 +4,7 @@
 #include "Math/Math.h"
 
 
+
 namespace GEngine::Asset
 {
 	//Helper macro to set vector uniform 
@@ -34,6 +35,7 @@ namespace GEngine::Asset
 	{
 
 	public:
+		//friend class GEngine::Material;
 		Shader();
 		~Shader();
 
@@ -67,10 +69,21 @@ namespace GEngine::Asset
 		void BindTextureUniform(unsigned int TexID, unsigned int TexUnit, unsigned int TexTarget);
 
 		template<typename T>
-		void SetUniform(const char* name, const T& data){ Set(name, (T*)(&data), 1); };
+		void SetUniform(const char* name, const T& data) { Set(name, (T*)(&data), 1); };
+
+	
+		void SetUniform(const char* name, bool data);
 
 		template<typename T>
 		void SetUniform(const char* name, const std::vector<T>& data) { Set(name, data.data(), data.size()); };
+
+		template<>
+		void SetUniform<std::pair<unsigned int, unsigned int>>(const char* name, const std::pair<unsigned int, unsigned int>& textureBinding);
+	   
+		template<>
+		void SetUniform<std::pair<unsigned int, std::pair<unsigned int, unsigned int>>>(const char* name, const std::pair<unsigned int, std::pair<unsigned int, unsigned int>>& textureBinding);
+
+		auto& GetUniformLocations() { return m_UniformLocations; }
 
 
 	private:
@@ -80,7 +93,7 @@ namespace GEngine::Asset
 		static std::string GetExtension(const char* name);
 
 		template<typename T>
-		void Set(const char* name, T* arr, unsigned int length){};
+		void Set(const char* name, T* arr, unsigned int length);
 
 		
 

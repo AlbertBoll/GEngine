@@ -1,5 +1,8 @@
 #include "gepch.h"
 #include "Core/GEngine.h"
+#include "Managers/ShapeManager.h"
+#include "Core/Renderer.h"
+
 
 
 
@@ -37,12 +40,9 @@ namespace GEngine
 		#endif
 	}
 
-	void GEngine::Initialize()
+	void GEngine::Initialize(const std::initializer_list<WindowProperties>& WindowsPropertyList)
 	{
 
-	
-		if (!m_IsInitialize)
-		{
 			Log::Initialize();
 			GENGINE_CORE_INFO("Initialize Logging...");
 			GENGINE_CORE_INFO("GEngine v{}.{}", 1, 0);
@@ -55,7 +55,7 @@ namespace GEngine
 
 
 			//
-			//SDL_Init(SDL_INIT_EVERYTHING);
+			//int code = SDL_Init(SDL_INIT_EVERYTHING);
 			int code = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
 
 			ASSERT(!code, "SDL initialize failure");
@@ -69,46 +69,64 @@ namespace GEngine
 			SDL_GetDesktopDisplayMode(0, &mode);
 			GENGINE_CORE_INFO("Display width: {}. Display height: {}. Refresh Rate: {}", mode.w, mode.h, mode.refresh_rate);
 
-			GENGINE_CORE_INFO("Initialize Window Manager");
+			GENGINE_CORE_INFO("Initialize Window Manager...");
 			
 			m_WindowManager = Manager::WindowManager::GetScopedInstance();
 
+		
+			GetWindowManager()->AddWindows(WindowsPropertyList);
 
-			GENGINE_CORE_INFO("Initialize Input Manager");
+			GENGINE_CORE_INFO("Initialize Input Manager...");
 			
 			m_InputManager = Manager::InputManager::GetScopedInstance();
 			m_InputManager->Initialize();
 
-			GENGINE_CORE_INFO("Initialize Event Manager");
+			//m_WindowManager->GetInternalWindow(1)->BeginRender();
+
+			GENGINE_CORE_INFO("Initialize Event Manager...");
 
 			m_EventManager = Manager::EventManager::GetScopedInstance();
 			m_EventManager->Initialize();
-
-			m_IsInitialize = true;
-			
-		}
-	}
-
-
-	void GEngine::Run()
-	{
 		
-		SDL_Event event;
+			GENGINE_CORE_INFO("Initialize Shape Manager...");
+			Manager::ShapeManager::Initialize();
 
-		while (m_Running) {
+			
 
-			m_EventManager->OnEvent(event);
+			GENGINE_CORE_INFO("Initialize font...");
 
-			for (auto& p : m_WindowManager->GetWindows())
+			if (TTF_Init() != 0)
 			{
-
-				p.second->BeginRender();
-				p.second->EndRender();
+				GENGINE_CORE_ERROR("Failed to initialize SDL_ttf");
 			}
-		}
 
-
+			//GENGINE_CORE_INFO("Initialize Renderer...");
+			Renderer::Initialize();
+			
 	}
+
+
+	//void GEngine::Run()
+	//{
+	//	
+	//	SDL_Event event;
+
+	//	while (m_Running) {
+
+	//		m_EventManager->OnEvent(event);
+
+	//		
+
+	//		for (auto& p : m_WindowManager->GetWindows())
+	//		{
+
+	//			p.second->BeginRender();
+	//			//p.second->EndRender();
+	//		}
+	//	}
+
+
+	//}
 
 
 	void GEngine::ShutDown()

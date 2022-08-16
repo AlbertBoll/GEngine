@@ -87,7 +87,7 @@ namespace GEngine::Shape
 			}
 
 			AddAttributes(vertexPositionData, vertexColorData, vertexUVData, vertexNormalData);
-
+			UnBindVAO();
 		}
 
 	};

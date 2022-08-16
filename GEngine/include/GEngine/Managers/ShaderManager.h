@@ -12,7 +12,7 @@ namespace GEngine::Manager
 
 	class ShaderManager
 	{
-
+	public:
 		struct Files
 		{
 			//std::tuple<types...> keys_filepath;
@@ -46,6 +46,7 @@ namespace GEngine::Manager
 			}
 
 		};
+
 
 		struct FileHash
 		{

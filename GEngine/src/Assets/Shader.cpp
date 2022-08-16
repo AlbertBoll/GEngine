@@ -406,6 +406,12 @@ namespace GEngine::Asset
 		glBindTexture(TexTarget, TexID);
 	}
 
+	void Shader::SetUniform(const char* name, bool data)
+	{
+		const GLint loc = GetUniformLocation(name);
+		glUniform1i(loc, data);
+	}
+
 
 	GLuint Shader::GetUniformLocation(const char* name)
 	{
@@ -495,15 +501,19 @@ namespace GEngine::Asset
 	
 	using namespace Math;
 
-	SET_UNIFORM_IMPL(glUniform1iv, int, int);
+	//SET_UNIFORM_IMPL(glUniform1iv, bool, int);
+	SET_UNIFORM_IMPL(glUniform1iv, Vec1i, int);
 	SET_UNIFORM_IMPL(glUniform2iv, Vec2i, int);
 	SET_UNIFORM_IMPL(glUniform3iv, Vec3i, int);
 	SET_UNIFORM_IMPL(glUniform4iv, Vec4i, int);
-	SET_UNIFORM_IMPL(glUniform1fv, float, float);
+
+	SET_UNIFORM_IMPL(glUniform1fv, Vec1f, float);
 	SET_UNIFORM_IMPL(glUniform2fv, Vec2f, float);
 	SET_UNIFORM_IMPL(glUniform3fv, Vec3f, float);
 	SET_UNIFORM_IMPL(glUniform4fv, Vec4f, float);
+
 	SET_UNIFORM_IMPL(glUniform4fv, Quat, float);
+
 	SET_MATRIX_IMPL(glUniformMatrix2fv, Mat2, float);
 	SET_MATRIX_IMPL(glUniformMatrix3fv, Mat3, float);
 	SET_MATRIX_IMPL(glUniformMatrix4fv, Mat4, float);

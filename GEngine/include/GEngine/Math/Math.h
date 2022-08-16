@@ -27,20 +27,25 @@ namespace GEngine
 
 
 
-		const float Pi = 3.1415926535f;
-		const float TwoPi = Pi * 2.0f;
-		const float PiOver2 = Pi / 2.0f;
-		const float Infinity = std::numeric_limits<float>::infinity();
-		const float NegInfinity = -std::numeric_limits<float>::infinity();
+		constexpr float Pi = 3.1415926535f;
+		constexpr float TwoPi = Pi * 2.0f;
+		constexpr float PiOver2 = Pi / 2.0f;
+		constexpr float Infinity = std::numeric_limits<float>::infinity();
+		constexpr float NegInfinity = -std::numeric_limits<float>::infinity();
 
-		inline float ToRadians(float degrees)
+		inline constexpr float ToRadians(float degrees)
 		{
 			return degrees * Pi / 180.0f;
 		}
 
-		inline float ToDegrees(float radians)
+		inline constexpr float ToDegrees(float radians)
 		{
 			return radians * 180.0f / Pi;
+		}
+
+		inline constexpr Vec3f ToDegrees(const Vec3f& radians)
+		{
+			return { ToDegrees(radians.x), ToDegrees(radians.y), ToDegrees(radians.z) };
 		}
 
 		inline bool NearZero(float val, float epsilon = 0.001f)

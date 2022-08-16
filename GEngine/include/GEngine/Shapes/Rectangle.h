@@ -84,7 +84,7 @@ namespace GEngine::Shape
 			std::vector<Vec3f> bitangentData = { bitangent1, bitangent1, bitangent1, bitangent2, bitangent2, bitangent2 };
 
 			AddAttributes(positionData, colorData, uvData, normalData, tangentData, bitangentData);
-		
+			UnBindVAO();
 		}
 	};
 }

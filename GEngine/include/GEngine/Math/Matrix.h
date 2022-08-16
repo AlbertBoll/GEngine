@@ -6,6 +6,7 @@
 #include "glm/glm.hpp"
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 namespace GEngine::Math
 {
@@ -24,17 +25,17 @@ namespace GEngine::Math
 
 		static glm::mat4 MakeRotationX(float angle)
 		{
-			return glm::rotate(glm::mat4(1.0f), glm::radians(angle), { 1, 0, 0 });
+			return glm::rotate(glm::mat4(1.0f), angle, { 1, 0, 0 });
 		}
 
 		static glm::mat4 MakeRotationY(float angle)
 		{
-			return glm::rotate(glm::mat4(1.0f), glm::radians(angle), { 0, 1, 0 });
+			return glm::rotate(glm::mat4(1.0f), angle, { 0, 1, 0 });
 		}
 
 		static glm::mat4 MakeRotationZ(float angle)
 		{
-			return glm::rotate(glm::mat4(1.0f), glm::radians(angle), { 0, 0, 1 });
+			return glm::rotate(glm::mat4(1.0f), angle, { 0, 0, 1 });
 		}
 
 		static glm::mat4 MakeRotationFromArbitaryAxis(const Vec3f& axis, float angle)
@@ -52,6 +53,26 @@ namespace GEngine::Math
 		static glm::mat4 MakeScale(float s)
 		{
 			return glm::scale(glm::mat4(1.0f), { s, s, s });
+		}
+
+		static glm::mat4 MakeScale(const Vec3f& scale)
+		{
+			return glm::scale(glm::mat4(1.0f), scale);
+		}
+
+		static glm::mat4 MakeScaleX(float s)
+		{
+			return glm::scale(glm::mat4(1.0f), { s, 1, 1 });
+		}
+
+		static glm::mat4 MakeScaleY(float s)
+		{
+			return glm::scale(glm::mat4(1.0f), { 1, s, 1 });
+		}
+
+		static glm::mat4 MakeScaleZ(float s)
+		{
+			return glm::scale(glm::mat4(1.0f), { 1, 1, s });
 		}
 
 		static glm::mat4 MakePerspective(float field_of_view, float aspect_ratio, float near_field, float far_field)
@@ -139,6 +160,34 @@ namespace GEngine::Math
 
 		}
 
+
+		static Mat4 CalTransformation(const Vec3f& translation, const Vec3f& rotation, const Vec3f& scale)
+		{
+			return glm::translate(Mat4(1.0f), translation) * RotationMatrixFromEulerAngle(rotation) * glm::scale(Mat4(1.f), scale);
+		}
+
+
+		static Mat4 RotationMatrixFromEulerAngle(const Vec3f& euler)
+		{
+			return glm::eulerAngleXYZ(ToRadians(euler.x), ToRadians(euler.y), ToRadians(euler.z));
+		}
+
+		static bool ReCalculateNewTransform(const Mat4& oldTransform, Mat4& newTransform, Vec3f& translation, Vec3f& rotation, Vec3f& scale)
+		{
+			if (DecomposeTransform(oldTransform, translation, rotation, scale))
+			{
+				Mat4 transformX = glm::eulerAngleX(ToRadians(rotation.x));
+				Mat4 transformY = glm::eulerAngleY(ToRadians(rotation.y));
+				Mat4 transformZ = glm::eulerAngleZ(ToRadians(rotation.z));
+
+				Mat4 new_rotation = transformX * transformY * transformZ;
+
+				newTransform = glm::translate(Mat4(1.0f), translation) * new_rotation * glm::scale(Mat4(1.f), scale);
+				return true;
+			}
+
+			return false;
+		}
 
 
 		static glm::mat4 MakeLookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up = { 0, 1, 0 })

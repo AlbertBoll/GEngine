@@ -1,6 +1,10 @@
 
 #include "gepch.h"
 #include "Windows/SDLWindow.h"
+#include "Windows/ImGuiWindow.h"
+#include <imgui/imgui.h>
+//#include <Core/Renderer.h>
+#include "Core/BaseApp.h"
 
 namespace GEngine
 {
@@ -10,16 +14,17 @@ namespace GEngine
 
 	SDLWindow::~SDLWindow()
 	{
-	
+		
 	}
 
-	void GEngine::SDLWindow::Initialize(const WindowProperties& winProp)
+	void SDLWindow::Initialize(const WindowProperties& winProp)
 	{
 		uint32_t flag = GetWindowFlag(winProp);
 	
 
 		// Set OpenGL attributes
 		// Use the core OpenGL profile
+		//SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		// Specify version 4.6
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
@@ -31,6 +36,7 @@ namespace GEngine
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 		// Enable double buffering
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 		// Force OpenGL to use hardware acceleration
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
@@ -51,6 +57,7 @@ namespace GEngine
 
 		m_ScreenWidth = winProp.m_Width;
 		m_ScreenHeight = winProp.m_Height;
+		m_AspectRatio = winProp.m_AspectRatio;
 
 		//Set Window Minimum Size
 		SDL_SetWindowMinimumSize(m_Window, winProp.m_MinWidth, winProp.m_MinHeight);
@@ -58,22 +65,25 @@ namespace GEngine
 		m_Context = SDL_GL_CreateContext(m_Window);
 		ASSERT(m_Context, "SDL_GL context couldn't be created!");
 
+		SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE);
+		//SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_SCALING, "1", SDL_HINT_OVERRIDE);
+
 		int success = gladLoadGL();
 
 		//Load OpenGL Context
-		ASSERT(success, "OpenGL functions coundn't be loaded!");
+		ASSERT(success, "OpenGL functions couldn't be loaded!");
 
-		
+		//winProp::SetCornFlowerBlue();
 		glClearColor(winProp.m_Red, winProp.m_Green, winProp.m_Blue, 1.0f);
+		
+		////Enable depth test
+		//glEnable(GL_DEPTH);
+		//glDepthFunc(GL_LEQUAL);
 
-		//Enable depth test
-		glEnable(GL_DEPTH);
-		glDepthFunc(GL_LEQUAL);
-
-		//Enable blending
-		glEnable(GL_BLEND);
-		glEnable(GL_MULTISAMPLE);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		////Enable blending
+		//glEnable(GL_BLEND);
+		//glEnable(GL_MULTISAMPLE);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		
 
 		if (winProp.m_IsVsync)
@@ -82,31 +92,43 @@ namespace GEngine
 			SDL_GL_SetSwapInterval(1);
 		}
 
+		m_ImGuiWindow = new ImGuiWindow();
+		m_ImGuiWindow->Initialize(this, winProp.ImGuiWindowProperties);
 		
 
 	}
 
-	void GEngine::SDLWindow::SwapBuffer() const
+	void SDLWindow::SwapBuffer()
 	{
 		SDL_GL_SwapWindow(m_Window);
 	}
 
-	void GEngine::SDLWindow::ShutDown() 
+	void SDLWindow::ShutDown() 
 	{
 		//GENGINE_CORE_INFO("Release Window!");
-	
-			SDL_GL_DeleteContext(m_Context);
-			SDL_DestroyWindow(m_Window);
-			m_Context = nullptr;
-			m_Window = nullptr;
+		SDL_DestroyWindow(m_Window);
+		m_Window = nullptr;
+		FreeContext();
+		
+		//m_ImGuiWindow->ShutDown();
+		delete m_ImGuiWindow;
+		//m_ImGuiWindow = nullptr;
+		std::cout << "delete" << std::endl;
+			
+			
 		
 		
 		//SDL_Quit();
 	}
 
-	void GEngine::SDLWindow::SetTitle(const std::string& title) const
+	void SDLWindow::SetTitle(const std::string& title) const
 	{
 		SDL_SetWindowTitle(m_Window, title.c_str());
+	}
+
+	ImGuiWindow* SDLWindow::GetImGuiWindow() const
+	{
+		return m_ImGuiWindow;
 	}
 
 	uint32_t SDLWindow::GetWindowID() const
@@ -184,15 +206,24 @@ namespace GEngine
 		return flag;
 	}
 
-	void SDLWindow::BeginRender() const
+	void SDLWindow::BeginRender() 
 	{
 		SDL_GL_MakeCurrent(m_Window, m_Context);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	}
+
+	void SDLWindow::NullRender() 
+	{
+		SDL_GL_MakeCurrent(nullptr, nullptr);
 	}
 
 
-	void SDLWindow::EndRender() const
+	void SDLWindow::EndRender(BaseApp* app)
 	{
+		//m_ImGuiWindow->BeginRender(this);
+		//app->ImGuiRender();
+		//m_ImGuiWindow->EndRender(this);
 		SwapBuffer();
 	}
 
@@ -207,7 +238,16 @@ namespace GEngine
 	{
 		m_ScreenWidth = new_width;
 		m_ScreenHeight = new_height;
-		GENGINE_CORE_INFO("Window with title {} has been resized to ({}, {})", GetTitle(), new_width, new_height);
+		//m_ScreenWidth = ImGui::GetWindowSize().x;
+		//m_ScreenHeight = ImGui::GetWindowSize().y;
+
+		//GENGINE_CORE_INFO("Window with title {} has been resized to ({}, {})", GetTitle(), new_width, new_height);
+	}
+
+	void SDLWindow::FreeContext()
+	{
+		SDL_GL_DeleteContext(m_Context);
+		m_Context = nullptr;
 	}
 
 

@@ -38,7 +38,7 @@ namespace GEngine::Manager
 		
 		for (auto& ele : m_ShaderMap)
 		{
-			delete ele.second;
+			if(ele.second) delete ele.second;
 		}
 		
 	}

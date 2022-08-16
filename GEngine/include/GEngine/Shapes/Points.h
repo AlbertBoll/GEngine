@@ -9,6 +9,7 @@ namespace GEngine::Shape
 		Points(const std::vector<Vec3f>& vertexData) : Geometry()
 		{
 			AddAttributes(vertexData);
+			UnBindVAO();
 		}
 	};
 }

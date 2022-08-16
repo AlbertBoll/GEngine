@@ -1,10 +1,13 @@
 #pragma once
 
-namespace GEngine::Buffer
-{
 
-	class VertexBuffer;
-	class IndexBuffer;
+using namespace GEngine::Buffer;
+class GEngine::Buffer::VertexBuffer;
+class GEngine::Buffer::IndexBuffer;
+
+namespace GEngine
+{
+	
 
 	enum class BufferTrait
 	{

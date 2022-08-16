@@ -5,12 +5,12 @@
 
 namespace GEngine::Shape
 {
-	using namespace GEngine::Math;
+	using namespace Math;
 
 	class Polygon : public Geometry
 	{
 	public:
-		Polygon(int sides = 3, float radius = 1.f) : Geometry()
+		Polygon(int sides, float radius) : Geometry()
 		{
 			const auto segment_angle = TwoPi / sides;
 
@@ -38,7 +38,7 @@ namespace GEngine::Shape
 			}
 
 			AddAttributes(positionData, colorData, uvData, normalData);
-
+			UnBindVAO();
 		}
 	};
 

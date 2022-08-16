@@ -19,9 +19,9 @@ namespace GEngine::Asset
 
 	struct TextureDataFormat
 	{
-		unsigned int m_InternalFormat = 0x8058;
+		unsigned int m_InternalFormat = 0x8058; 
 		unsigned int m_DataFormat = 0x1908;
-		unsigned int m_DataType = 0x1406;
+		unsigned int m_DataType = 0x1401;
 	};
 
 
@@ -40,7 +40,7 @@ namespace GEngine::Asset
 
 	struct TextureInfo
 	{
-		TextureParam m_TextureSpec{.m_TexTarget = b_CubeMap? 0x8513: 0x0DE1};
+		TextureParam m_TextureSpec={};
 		TextureDataFormat m_TextureFormat{};
 		int m_Width{0};
 		int m_Height{0};

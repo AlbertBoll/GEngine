@@ -13,8 +13,8 @@
 		#define GENGINE_DEBUGBREAK() __builtin_debugtrap();
 
 	//not yet support any other platforms
-	#else
-		#error "Platform doesn't support debugbreak yet!"
+	//#else
+		//#error "Platform doesn't support debugbreak yet!"
 	
 	#endif
 	#define GENGINE_ENABLE_ASSERTS

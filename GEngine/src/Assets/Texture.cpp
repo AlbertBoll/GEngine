@@ -40,19 +40,23 @@ namespace GEngine::Asset
 
 	void Texture::LoadTexture(const std::string& fileName)
 	{
+
+		
+		glGenTextures(1, &m_TexID);
+		glBindTexture(GL_TEXTURE_2D, m_TexID);
+	
+
 		if (unsigned char* data = Texture::LoadPixels(fileName, m_TextureInfo.m_Width, m_TextureInfo.m_Height); data != nullptr)
 		{
-			glGenTextures(1, &m_TexID);
-			glBindTexture(GL_TEXTURE_2D, m_TexID);
+			
+		
 
 			int width = m_TextureInfo.m_Width;
 			int height = m_TextureInfo.m_Height;
 			GLenum& internalFormat = m_TextureInfo.m_TextureFormat.m_InternalFormat; //GL_RGBA8;
 			GLenum& dataFormat = m_TextureInfo.m_TextureFormat.m_DataFormat; //GL_RGBA;
-
 			int channel = m_TextureInfo.m_Channels;
 			bool isGamma = m_TextureInfo.b_GammaCorrection;
-
 			switch (channel)
 			{
 			case 1:  internalFormat = GL_R8;  dataFormat = GL_RED; break;
@@ -66,7 +70,7 @@ namespace GEngine::Asset
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_TextureInfo.m_TextureSpec.m_WrapS);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_TextureInfo.m_TextureSpec.m_WrapT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_TextureInfo.m_TextureSpec.m_MinFilter);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_TextureInfo.m_TextureSpec.m_MagFilter);
 
 			//check if hardware support anisotropic filtering
@@ -84,6 +88,37 @@ namespace GEngine::Asset
 			DeletePixels(data);
 
 		}
+
+		//If cannot load file or file doesn't exist
+		else
+		{
+			float pixels[] =
+			{
+				// Black          White          Black          White
+				0.f, 0.f, 0.f,  1.f, 1.f, 1.f,  0.f, 0.f, 0.f,  1.f, 1.f, 1.f,
+
+				// White           Black          White          Black
+				1.f, 1.f, 1.f,  0.f, 0.f, 0.f,  1.f, 1.f, 1.f,  0.f, 0.f, 0.f,
+
+				// Black          White          Black          White
+				0.f, 0.f, 0.f,  1.f, 1.f, 1.f,  0.f, 0.f, 0.f,  1.f, 1.f, 1.f,
+
+				// White           Black          White          Black
+				1.f, 1.f, 1.f,  0.f, 0.f, 0.f,  1.f, 1.f, 1.f,  0.f, 0.f, 0.f
+
+			};
+
+			GENGINE_CORE_WARN("Unable to load texture: {} - set to default checkboard", fileName);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 4, 4, 0, GL_RGB, GL_FLOAT, pixels);
+			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_TextureInfo.m_TextureSpec.m_WrapS);
+			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_TextureInfo.m_TextureSpec.m_WrapT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+
+		}
+
+		//glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 
@@ -249,14 +284,17 @@ namespace GEngine::Asset
 		glGenTextures(1, &m_TexID);
 
 		m_TextureInfo.m_TextureSpec.m_TexTarget = m_TextureInfo.b_CubeMap ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D;
+
 		Bind();
+
+		int dataType = texInfo.b_CubeMap ? GL_FLOAT : GL_UNSIGNED_BYTE;
 
 		// Set the image width/height with null initial data
 		if (!texInfo.b_CubeMap)
 		{
 
 			glTexImage2D(m_TextureInfo.m_TextureSpec.m_TexTarget, 0, texInfo.m_TextureFormat.m_InternalFormat, m_TextureInfo.m_Width, m_TextureInfo.m_Height, 0, texInfo.m_TextureFormat.m_DataFormat,
-				texInfo.m_TextureFormat.m_DataType, nullptr);
+				dataType, nullptr);
 
 
 			//check if hardware support anisotropic filtering
@@ -282,15 +320,15 @@ namespace GEngine::Asset
 				//glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, nullptr);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_TextureInfo.m_TextureFormat.m_InternalFormat,
 					m_TextureInfo.m_Width, m_TextureInfo.m_Height, 0, m_TextureInfo.m_TextureFormat.m_DataFormat,
-					m_TextureInfo.m_TextureFormat.m_DataType, nullptr);
+					dataType, nullptr);
 			}
 
 
-			glTexParameteri(m_TextureInfo.m_TextureSpec.m_TexTarget, GL_TEXTURE_WRAP_S, m_TextureInfo.m_TextureSpec.m_WrapS);
-			glTexParameteri(m_TextureInfo.m_TextureSpec.m_TexTarget, GL_TEXTURE_WRAP_T, m_TextureInfo.m_TextureSpec.m_WrapT);
-			glTexParameteri(m_TextureInfo.m_TextureSpec.m_TexTarget, GL_TEXTURE_WRAP_R, m_TextureInfo.m_TextureSpec.m_WrapR);
-			glTexParameteri(m_TextureInfo.m_TextureSpec.m_TexTarget, GL_TEXTURE_MIN_FILTER, m_TextureInfo.m_TextureSpec.m_MinFilter);
-			glTexParameteri(m_TextureInfo.m_TextureSpec.m_TexTarget, GL_TEXTURE_MAG_FILTER, m_TextureInfo.m_TextureSpec.m_MagFilter);
+			glTexParameteri(m_TextureInfo.m_TextureSpec.m_TexTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(m_TextureInfo.m_TextureSpec.m_TexTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(m_TextureInfo.m_TextureSpec.m_TexTarget, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+			glTexParameteri(m_TextureInfo.m_TextureSpec.m_TexTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(m_TextureInfo.m_TextureSpec.m_TexTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 			if (texInfo.b_GenerateMipmap)
 				glGenerateMipmap(GL_TEXTURE_CUBE_MAP);

@@ -25,8 +25,9 @@
 #include <iostream>
 #include <functional>
 #include "sdl2/SDL.h"
+#include <sdl2/SDL_ttf.h>
 #include <fstream>
-//#include <variant>
+#include <variant>
 #include "Core/Log.h"
 #include "Core/Base.h"
 #include <limits>

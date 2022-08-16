@@ -1,13 +1,21 @@
 #pragma once
+
 #include"Geometry/Geometry.h"
 #include <Math/Math.h>
 #include <vector>
 
 namespace GEngine::Shape
 {
-	using namespace GEngine::Math;
+	//using namespace GEngine::Math;
 
-	class Box : public Geometry
+	struct BoxParams
+	{
+		float width = 1.0f;
+		float height = 1.0f;
+		float depth = 1.0f;
+	};
+
+	class Box: public Geometry
 	{
 	public:
 		Box(float width = 1.0f, float height = 1.0f, float depth = 1.0f): Geometry()
@@ -25,10 +33,16 @@ namespace GEngine::Shape
 			//Color 
 			Vec3f c1 = { 1.0f, 0.0f, 0.0f };
 			Vec3f c2 = { 0.5f, 0.0f, 0.0f };
-			Vec3f c3 = { 0.0f, 1.0f, 0.0f };
+			Vec3f c3 = { 1.0f, 1.0f, 1.0f };
 			Vec3f c4 = { 0.0f, 0.5f, 0.0f };
 			Vec3f c5 = { 0.0f, 0.0f, 1.0f };
 			Vec3f c6 = { 0.0f, 0.0f, 0.5f };
+			/*Vec3f c1 = { .5f, .5f, .5f };
+			Vec3f c2 = { .5f, .5f, .5f };
+			Vec3f c3 = { .5f, .5f, .5f };
+			Vec3f c4 = { .5f, .5f, .5f };
+			Vec3f c5 = { .5f, .5f, .5f };
+			Vec3f c6 = { .5f, .5f, .5f }; */
 
 			//texture coords
 			Vec2f t0 = { 0.f, 0.f };
@@ -112,8 +126,11 @@ namespace GEngine::Shape
 			);
 
 			AddAttributes(positionData, colorData, uvData, normalData);
-
-
+			UnBindVAO();
 		}
+
+
 	};
+	
+
 }

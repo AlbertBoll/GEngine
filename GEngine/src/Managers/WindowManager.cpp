@@ -1,5 +1,6 @@
 #include "gepch.h"
 #include "Managers/WindowManager.h"
+#include <Windows/SDLWindow.h>
 
 
 namespace GEngine::Manager
@@ -56,17 +57,26 @@ namespace GEngine::Manager
 
 	void WindowManager::AddWindows(const std::initializer_list<WindowProperties>& winProps)
 	{
+	
 		for (auto& p : winProps)
 		{
 			AddWindows(p);
 		}
+
+		//GetInternalWindow(1)->BeginRender();
 	}
 
 
 	void WindowManager::RemoveWindow(uint32_t ID)
 	{
+		--m_NumOfWindows;
 		ASSERT(m_Windows[ID]);
 		m_Windows[ID]->ShutDown();
 		m_Windows.erase(ID);
+		/*if (--m_NumOfWindows == 0)
+		{
+			SDLWindow::FreeContext();
+			
+		}*/
 	}
 }

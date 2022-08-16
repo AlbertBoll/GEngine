@@ -60,7 +60,7 @@ namespace GEngine::Shape
 
             AddAttributes(positions, colors, uv, normals);
             AddIndices(indices);
-
+            //UnBindVAO();
         }
     
 	};

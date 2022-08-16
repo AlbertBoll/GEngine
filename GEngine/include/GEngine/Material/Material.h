@@ -1,14 +1,33 @@
 #pragma once
 
 #include <unordered_map>
+#include <Assets/Shaders/Shader.h>
 
-using namespace GEngine::Asset;
 
 
 namespace GEngine
 {
 	//using namespace Graphic;
 	//class GEngine::Graphic::Shader;
+
+	enum class DrawMode
+	{
+		Points,
+		LINES,
+		LINE_LOOP,
+		LINE_STRIP, 
+		TRIANGLES,
+		TRIANGLE_STRIP,
+		TRIANGLE_FAN
+	};
+
+	enum class RenderMode
+	{
+		Arrays,
+		Elements,
+		ArraysInstanced,
+		ElementsInstanced
+	};
 
 	enum class LineType
 	{
@@ -26,20 +45,18 @@ namespace GEngine
 
 	struct PointSetting
 	{
-		int mode = 0x1B00;
 		float pointSize{ 8.0f };
 		bool bRoundedPoints = true;
 	};
 
 	struct LineSetting
 	{
-		int mode = 0x0003;
 		float lineWidth = 1.0f;
+		LineType lineType;
 	};
 
 	struct SurfaceSetting
 	{
-		int mode = 0x0004;
 		float lineWidth = 1.0f;
 		bool bDoubleSide = true;
 		bool bWireFrame = false;
@@ -50,23 +67,28 @@ namespace GEngine
 		PointSetting pointSetting;
 		LineSetting lineSetting;
 		SurfaceSetting surfaceSetting;
+		
 
 		PrimitivesSettings() {}
 	};
 
-	struct Setting
+	struct RenderSetting
 	{
 		PrimitivesSettings m_PrimitivesSetting;
+		RenderMode m_RenderMode = RenderMode::Arrays;
 		int m_TexTarget = 0x0DE1;
-
+		DrawMode m_Mode = DrawMode::TRIANGLES;
+		
 	};
 
 	class Material
 	{
 	protected:
-		Setting m_Setting;
-		Shader* m_Shader{};
-		std::unordered_multimap<unsigned, std::pair<unsigned, unsigned>> m_TextureList;
+
+		friend class Entity;
+		RenderSetting m_RenderSetting;
+		Asset::Shader* m_Shader{};
+		std::unordered_multimap<unsigned int, std::pair<unsigned int, unsigned int>> m_TextureList;
 
 	public:
 		Material() = default;
@@ -77,14 +99,63 @@ namespace GEngine
 
 		Material& operator=(Material&& other)noexcept;
 
-		virtual void SetRenderSettings(const Setting& settings) { m_Setting = settings; }
+		RenderSetting& GetRenderSetting() { return m_RenderSetting; }
+
+		virtual void UpdateRenderSettings() {}
+
+		void SetRenderMode(RenderMode mode) { m_RenderSetting.m_RenderMode = mode; }
+
+		template <typename T>
+		void SetUniforms(const std::map<std::string, T>& uniforms);
+
+
+		virtual void SetRenderSettings(const RenderSetting& settings) { m_RenderSetting = settings; }
 		std::unordered_multimap<unsigned, std::pair<unsigned, unsigned>>& GetTextureList() { return m_TextureList; }
 
-		[[nodiscard]] GLuint GetShaderRef() const;
+		[[nodiscard]] unsigned int GetShaderRef() const;
+
+		[[nodiscard]] int GetTextureTarget() const { return m_RenderSetting.m_TexTarget; }
+
+		void SetTextureTarget(int target) { m_RenderSetting.m_TexTarget = target; }
 
 		void UseProgram()const;
-	
 
+		void BindTextureUniforms(int TexTarget);
+		void BindTextureUniforms();
+		virtual void UseUniformBufferObject(const std::string& uniformBlockName) {}
 	};
+
+
+
+	template<typename T>
+	inline void Material::SetUniforms(const std::map<std::string, T>& uniforms)
+	{
+		//UseProgram();
+		for (auto& [uniformName, ele] : uniforms)
+		{
+			if (auto name = m_Shader->GetUniformLocations().find(uniformName); name != m_Shader->GetUniformLocations().end())
+			{
+				m_Shader->SetUniform(uniformName.c_str(), ele);
+				//m_TextureList.emplace(1, 1);
+			}
+		}
+
+		
+	}
+
+	template <>
+	inline void Material::SetUniforms<std::pair<unsigned, std::pair<unsigned, unsigned>>>(
+		const std::map<std::string, std::pair<unsigned, std::pair<unsigned, unsigned>>>& uniforms)
+	{
+		UseProgram();
+		for (auto& ele : uniforms)
+		{
+			m_Shader->SetUniform(ele.first.c_str(), ele.second);
+			m_TextureList.emplace(ele.second);
+		}
+
+	}
+
+
 
 }

@@ -1,11 +1,12 @@
 #include "gepch.h"
-#include "Mesh/Mesh.h"
+
 #include <Mesh/IndexBuffer.h>
 #include <Mesh/VertexBuffer.h>
+#include "Mesh/Mesh.h"
 
-namespace GEngine::Buffer
+namespace GEngine//::Buffer
 {
-	
+	using namespace Buffer;
 	static GLenum FromAttributeDataTypeToGLType(AttributeType type)
 	{
 		switch (type)
@@ -43,7 +44,7 @@ namespace GEngine::Buffer
 	}
 
 
-	void Mesh::SetIndexBuffer(const RefPtr<Buffer::IndexBuffer>& indexBuffer)
+	void Mesh::SetIndexBuffer(const RefPtr<IndexBuffer>& indexBuffer)
 	{
 		glBindVertexArray(m_VertexArrayRef);
 		indexBuffer->Bind();
@@ -74,7 +75,7 @@ namespace GEngine::Buffer
 					glVertexAttribPointer(m_VertexBufferIndex, att.GetComponentCount(), 
 						FromAttributeDataTypeToGLType(att.m_Type),
 						att.m_Normalized ? GL_TRUE: GL_FALSE, layout.GetStride(), 
-						(const void*)att.m_Offset);
+						reinterpret_cast<const void*>(att.m_Offset));
 					m_VertexBufferIndex++;
 					break;
 				}
@@ -88,7 +89,7 @@ namespace GEngine::Buffer
 					glEnableVertexAttribArray(m_VertexBufferIndex);
 					glVertexAttribIPointer(m_VertexBufferIndex, att.GetComponentCount(),
 						FromAttributeDataTypeToGLType(att.m_Type), 
-						layout.GetStride(), (const void*)att.m_Offset);
+						layout.GetStride(), reinterpret_cast<const void*>(att.m_Offset));
 					m_VertexBufferIndex++;
 					break;
 				}

@@ -12,10 +12,10 @@ namespace GEngine
 
 	struct PerspectiveSetting
 	{
-		float m_ZoomLevel{ 1.0f };
+		//float m_ZoomLevel{ 1.0f };
 		float m_FieldOfView{ 45.f };
 		float m_AspectRatio{ 1.0f };
-		float m_Near{ 0.1f };
+		float m_Near{ 0.01f };
 		float m_Far{ 1000.f };
 	};
 
@@ -23,8 +23,10 @@ namespace GEngine
 	{
 		float m_Left{ -1.0f };
 		float m_Right{ 1.0f };
-		float m_Buttom{ -1.0f };
+		float m_Bottom{ -1.0f };
 		float m_Top{ 1.0f };
+		//float m_Size{ 10.0f };
+		//float m_AspectRatio{ 1.0f };
 		float m_Near{ -1.0f };
 		float m_Far{ 1.0f };
 
@@ -45,40 +47,57 @@ namespace GEngine
 	class CameraBase: public Actor
 	{
 
+
+		friend class Entity;
 	public:
-		CameraBase() = default;
+		CameraBase(): Actor(){}
 		CameraBase(const CameraSetting& camera): m_CameraSetting{camera}{}
 		void SetCameraSetting(const CameraSetting& camera_setting) { m_CameraSetting = camera_setting; }
 		virtual void OnResize(int new_width, int new_height) = 0;
+		virtual void OnResize(float ratio) = 0;
 		virtual void OnScroll(float new_zoom_level) = 0;
 
-		void OnUpdateView()
+		virtual void OnUpdateView()
 		{
 			m_View = glm::inverse(GetWorldTransform());
-			RecalculateViewProjection();
+			//RecalculateViewProjection();
 		}
 
-		void RecalculateViewProjection() { m_ViewProjection = m_Projection * m_View; }
+		//void RecalculateViewProjection() { m_ViewProjection = m_Projection * m_View; }
 
-		Mat4 GetViewProjection() const
+		/*Mat4 GetViewProjection() const
 		{
 			return m_ViewProjection;
-		}
+		}*/
 
 		Mat4 GetView() const { return m_View; }
+		CameraSetting& GetCameraSetting() { return m_CameraSetting; }
 
 		Mat4 GetProjection() const { return m_Projection; }
+		Vec2f& GetInitialMousePosition() { return m_InitialMousePosition; }
+		//float GetZoomLevel() const { return m_CameraSetting.m_PerspectiveSetting.m_ZoomLevel; }
 
-		float GetZoomLevel() const { return m_CameraSetting.m_PerspectiveSetting.m_ZoomLevel; }
+		bool GetActive()const { return m_IsActive; }
+		void SetActive(bool isActive){ m_IsActive = isActive; }
+
+		bool& GetIsActive() { return m_IsActive; }
+		bool& GetIsFixAspectRatio() { return m_IsFixAspectRatio; }
+		virtual void MouseRotate(const Vec2f& delta) {};
+		virtual void MousePan(const Vec2f& delta) {};
 
 	private:
 		
 
 	protected:
 		CameraSetting m_CameraSetting;
+
 		Mat4 m_Projection{ 1.0f };
 		Mat4 m_View{ 1.0f };
-		Mat4 m_ViewProjection{ 1.0f };
+		Vec2f m_InitialMousePosition{ 0.f, 0.f };
+		//Mat4 m_ViewProjection{ 1.0f };
+		bool m_IsActive{ true };
+		bool m_IsFixAspectRatio{ false };
+		float m_ViewportWidth = 1600, m_ViewportHeight = 900;
 	};
 }
 

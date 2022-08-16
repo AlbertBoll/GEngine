@@ -21,11 +21,11 @@ namespace GEngine
 		NONCOPYMOVABLE(GEngine);
 		~GEngine() = default;
 		static GEngine& Get();
-		void Initialize();
+		void Initialize(const std::initializer_list<WindowProperties>& WindowsPropertyList);
 		Manager::WindowManager* GetWindowManager() { return m_WindowManager.get(); }
 		Manager::InputManager* GetInputManager() { return m_InputManager.get(); }
 		Manager::EventManager* GetEventManager() { return m_EventManager.get(); }
-		void Run();
+		//void Run();
 		void ShutDown();
 		bool IsRunning()const { return m_Running; }
 
@@ -40,7 +40,6 @@ namespace GEngine
 		ScopedPtr<Manager::WindowManager> m_WindowManager{};
 		ScopedPtr<Manager::EventManager> m_EventManager{};
 
-		bool m_IsInitialize{ false };
 		bool m_Running{ true };
 
 	};

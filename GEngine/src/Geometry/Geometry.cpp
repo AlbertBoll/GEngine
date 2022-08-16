@@ -3,7 +3,11 @@
 
 namespace GEngine
 {
-
+	Geometry::Geometry()
+	{
+		glGenVertexArrays(1, &m_Vao);
+		glBindVertexArray(m_Vao);
+	}
 
 	Geometry::~Geometry()
 	{
@@ -12,7 +16,11 @@ namespace GEngine
 		{
 			glDeleteBuffers((int)m_Buffers.size(), m_Buffers.data());
 		}
-		
+
+		if (m_Vao != 0) {
+			glDeleteVertexArrays(1, &m_Vao);
+			m_Vao = 0;
+		}
 	}
 
 	void Geometry::CountVertices()
@@ -27,6 +35,16 @@ namespace GEngine
 		{
 			m_VertexCount = 0;
 		}
+	}
+
+	void Geometry::BindVAO() const
+	{
+		glBindVertexArray(m_Vao);
+	}
+
+	void Geometry::UnBindVAO() const
+	{
+		glBindVertexArray(0);
 	}
 
 	void Geometry::AddIndices(const std::vector<unsigned int>& data)
